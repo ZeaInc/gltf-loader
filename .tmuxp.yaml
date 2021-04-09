@@ -1,0 +1,11 @@
+session_name: MyPlugin
+suppress_history: false
+windows:
+  - layout: main-vertical
+    panes:
+      - yarn run build:watch
+      - ${EDITOR} -S
+  - panes:
+      - shell_command:
+          - git fetch
+          - git status

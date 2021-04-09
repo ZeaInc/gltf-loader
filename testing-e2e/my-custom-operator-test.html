@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>MyCustomOperatorTest - My Custom Plugin</title>
+
+    <link rel="stylesheet" href="styles/normalize.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+
+    <script src="../node_modules/@zeainc/zea-engine/dist/index.umd.js"></script>
+    <script src="../dist/index.umd.js"></script>
+
+    <script type="module">
+      const { GLRenderer, Scene, Vec3, GeomItem, Cone, Material, Xfo, Cuboid } = zeaEngine
+      const { MyCustomRenderPass, MyCustomOperator } = window.myPlugin
+
+      const scene = new Scene()
+      scene.setupGrid(10.0, 10)
+
+      const renderer = new GLRenderer(document.getElementById('viewport'), { hideSplash: true, antialias: false })
+      renderer.setScene(scene)
+
+      const coneGeomItem = new GeomItem(
+        'cone',
+        new Cone(0.1, 1.0),
+        new Material('mat', 'StandardSurfaceShader'),
+        new Xfo()
+      )
+      scene.getRoot().addChild(coneGeomItem)
+
+      const cuboidGeomItem = new GeomItem(
+        'cuboid',
+        new Cuboid(0.1, 1.0, 0.1),
+        new Material('mat', 'StandardSurfaceShader'),
+        new Xfo(new Vec3(1, 1, 1))
+      )
+      scene.getRoot().addChild(cuboidGeomItem)
+
+      // Operators enable computation to occur based on the changes within the graph.
+      // When a parameter value is changed by a user interaction or a timer, an evaluation
+      // is scheduled to update the outputs of the operator based on the new inputs value.
+      // This can cascade between operators if the output parameters are the inputs to other
+      // operators. We can see this here in this simple chain.
+      // All procedural updates in the engine are facilitates via operators. Operators are lazilly evaluated,
+      // so if the value of a given parameter is not needed, then it is not computed.
+      // For example, if parts of the scene tree are invisible, then they are not updated when
+      // the tree is transformed.
+      const op0 = new MyCustomOperator()
+      op0.getOutput('Xfo').setParam(coneGeomItem.getParameter('GlobalXfo'))
+
+      const op1 = new MyCustomOperator()
+      op1.getInput('Space').setParam(coneGeomItem.getParameter('GlobalXfo'))
+      op1.getOutput('Xfo').setParam(cuboidGeomItem.getParameter('GlobalXfo'))
+
+      let angle0 = 0.0
+      let angle1 = 0.0
+      setInterval(() => {
+        angle0 += 0.001
+        angle1 += 0.01
+        op0.getParameter('Angle').setValue(angle0)
+        op1.getParameter('Angle').setValue(angle1)
+      }, 0.02)
+
+      window.postMessage('done-loading')
+
+      // {{{ Messages handler.
+      const handleMessage = (event) => {
+        const { data } = event
+
+        if (data === 'variant-01') {
+          renderer.getViewport().getCamera().setPositionAndTarget(new Vec3(2, 2, -2.7), new Vec3(0, 0, 0.4))
+          renderer.frameAll()
+          window.postMessage(`done-${data}`)
+        } else if (data === 'variant-02') {
+          renderer.getViewport().getCamera().setPositionAndTarget(new Vec3(-2, -2, 2.7), new Vec3(0, 0, 0.4))
+          renderer.frameAll()
+          window.postMessage(`done-${data}`)
+        }
+      }
+
+      window.addEventListener('message', handleMessage, false)
+      // }}}
+    </script>
+  </head>
+  <body>
+    <canvas class="full-size" id="viewport" />
+  </body>
+</html>

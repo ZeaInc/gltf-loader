@@ -1,0 +1,57 @@
+{
+  "name": "@fooinc/my-custom-plugin",
+  "libraryName": "MyPlugin",
+  "fileName": "my-custom-plugin",
+  "author": "Philip Taylor",
+  "description": "A Custom plugin sample for Zea Engine.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.umd.js",
+  "files": [
+    "dist/"
+  ],
+  "keywords": [
+    "WebGL",
+    "ES6",
+    "Zea"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "..."
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -w -c",
+    "dev": "npm-run-all --parallel build:watch start:watch",
+    "dist": "yarn publish --access=public",
+    "generate": "plop",
+    "prepare": "yarn run build",
+    "release": "standard-version",
+    "start": "es-dev-server",
+    "start:watch": "es-dev-server --app-index testing-e2e/index.html --open --watch",
+    "test:e2e": "percy exec cypress run --browser chrome --headless",
+    "test:e2e:watch": "percy exec cypress open"
+  },
+  "devDependencies": {
+    "@percy/cypress": "^2.3.2",
+    "cypress": "^5.4.0",
+    "es-dev-server": "^1.57.8",
+    "eslint": "^6.5.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "npm-run-all": "^4.1.5",
+    "plop": "^2.7.4",
+    "prettier": "^2.1.1",
+    "rollup": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-plugin-web-worker-loader": "^0.9.0",
+    "standard-version": "^9.0.0",
+    "yargs": "12.0.2"
+  },
+  "dependencies": {
+    "@zeainc/zea-engine": "^3"
+  }
+}
