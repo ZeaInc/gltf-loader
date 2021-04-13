@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MyCustomTreeItem - My Custom Plugin</title>
+    <title>GLTF Loader Test</title>
     <link rel="stylesheet" href="styles/tachyons.min.css" />
     <link rel="stylesheet" href="styles/main.css" />
     <script src="../node_modules/@zeainc/zea-engine/dist/index.umd.js"></script>
     <script src="../node_modules/@zeainc/zea-engine/dist/plugins.umd.js"></script>
+
+    <script src="https://www.gstatic.com/draco/v1/decoders/draco_decoder_gltf.js"></script>
     <script src="../dist/index.umd.js"></script>
   </head>
   <body>
@@ -39,47 +41,41 @@
       // Setup the custom classes
       // The custom pass to handle rendering, and add a custom
       // TreeItem to the scene tree
-      const { MyCustomRenderPass, MyCustomTreeItem } = window.myPlugin
+      const { GLTFAsset } = window.myPlugin
 
-      const myCustomRenderPass = new MyCustomRenderPass()
-      renderer.addPass(myCustomRenderPass)
+      const asset = new GLTFAsset('Foo')
 
-      const myCustomTreeItem = new MyCustomTreeItem('Foo')
-
-      myCustomTreeItem.loadDataFile('./data/test-data.txt').then(() => {
+      asset.loadGltf('./data/GearboxAssy/glTF-Draco/GearboxAssy.gltf').then(() => {
         console.log('Loading done')
+        renderer.frameAll()
       })
 
-      myCustomTreeItem.getParameter('GlobalXfo').setValue(new Xfo(new Vec3(0, 0, 0.5)))
-      myCustomTreeItem.setCutVector(new Vec3(1, 0, 0))
-      myCustomTreeItem.setCutDist(0.0)
-      myCustomTreeItem.setCutawayEnabled(true)
-      scene.getRoot().addChild(myCustomTreeItem)
+      scene.getRoot().addChild(asset)
 
-      // /////////////////////////////////////
-      // Check that pointer interactions work.
-      // can we click on our custom item, and add a highlight.
-      // This tests the alternative modes that the shader can be applied.
-      const sphere = new Sphere(0.02)
-      const material = new Material('click', 'FlatSurfaceShader')
-      let highlighted
-      renderer.getViewport().on('pointerDown', (event) => {
-        if (event.intersectionData) {
-          const { geomItem, dist } = event.intersectionData
-          if (geomItem != highlighted) {
-            if (highlighted) highlighted.removeHighlight('custom')
-            highlighted = geomItem
-            highlighted.addHighlight('custom', new Color(0, 1, 0, 0.1))
-          }
+      // // /////////////////////////////////////
+      // // Check that pointer interactions work.
+      // // can we click on our custom item, and add a highlight.
+      // // This tests the alternative modes that the shader can be applied.
+      // const sphere = new Sphere(0.02)
+      // const material = new Material('click', 'FlatSurfaceShader')
+      // let highlighted
+      // renderer.getViewport().on('pointerDown', (event) => {
+      //   if (event.intersectionData) {
+      //     const { geomItem, dist } = event.intersectionData
+      //     if (geomItem != highlighted) {
+      //       if (highlighted) highlighted.removeHighlight('custom')
+      //       highlighted = geomItem
+      //       highlighted.addHighlight('custom', new Color(0, 1, 0, 0.1))
+      //     }
 
-          const pos = event.pointerRay.pointAtDist(dist)
-          const clickMarker = new GeomItem('click', sphere, material, new Xfo(pos))
-          scene.getRoot().addChild(clickMarker)
-        } else {
-          if (highlighted) highlighted.removeHighlight('custom')
-          highlighted = null
-        }
-      })
+      //     const pos = event.pointerRay.pointAtDist(dist)
+      //     const clickMarker = new GeomItem('click', sphere, material, new Xfo(pos))
+      //     scene.getRoot().addChild(clickMarker)
+      //   } else {
+      //     if (highlighted) highlighted.removeHighlight('custom')
+      //     highlighted = null
+      //   }
+      // })
 
       // /////////////////////////////////////
       // Prepare to capture images.
