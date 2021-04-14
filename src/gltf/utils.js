@@ -1,4 +1,4 @@
-import { glMatrix } from 'gl-matrix'
+// import { glMatrix } from 'gl-matrix'
 
 function jsToGl(array) {
   return array

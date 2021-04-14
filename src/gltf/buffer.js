@@ -1,4 +1,4 @@
-import axios from 'axios'
+// import axios from 'axios'
 import { getContainingFolder } from './utils.js'
 import { GltfObject } from './gltf_object.js'
 import { resourceLoader } from '@zeainc/zea-engine'
