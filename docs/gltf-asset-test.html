@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GLTF Loader Test</title>
+    <link rel="stylesheet" href="styles/tachyons.min.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine/dist/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine/dist/plugins.umd.js"></script>
+
+    <script src="https://www.gstatic.com/draco/v1/decoders/draco_decoder_gltf.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zeainc/gltf-loader/dist/index.umd.js"></script>
+  </head>
+  <body>
+    <canvas class="full-size" id="app"></canvas>
+
+    <script type="module">
+      const { GLRenderer, Scene, Vec3, Xfo, Color, Sphere, Material, GeomItem, GLBoundingBoxPass, EnvMap } = zeaEngine
+
+      const scene = new Scene()
+      const renderer = new GLRenderer(document.getElementById('app'), { hideSplash: true, xrCompatible: false })
+      renderer.setScene(scene)
+      scene.setupGrid(10, 10)
+
+      const envMap = new EnvMap()
+      envMap.getParameter('FilePath').setValue('data/pisa.zenv')
+      scene.setEnvMap(envMap)
+      scene.getSettings().getParameter('Display EnvMap').setValue(false)
+      renderer.exposure = 1.5
+
+      // /////////////////////////////////////
+      // Setup a Bounding Box pass to display all
+      // the bounding boxes of the items in the scene.
+      // const boundingBoxPass = new GLBoundingBoxPass()
+      // renderer.addPass(boundingBoxPass)
+      // boundingBoxPass.addTreeItem(scene.getRoot(), true)
+
+      // /////////////////////////////////////
+      // Setup the custom classes
+      // The custom pass to handle rendering, and add a custom
+      // TreeItem to the scene tree
+      const { GLTFAsset } = gltfLoader
+
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('gltf')) {
+        const asset = new GLTFAsset('gltf')
+        asset.loadGltf(urlParams.get('gltf')).then(() => {
+          console.log('Loading done')
+          renderer.frameAll()
+        })
+        scene.getRoot().addChild(asset)
+      }
+
+      // /////////////////////////////////////
+      // Check that pointer interactions work.
+      let highlighted
+      renderer.getViewport().on('pointerMove', (event) => {
+        if (event.intersectionData) {
+          const { geomItem, dist } = event.intersectionData
+          if (geomItem != highlighted) {
+            if (highlighted) highlighted.removeHighlight('custom')
+            highlighted = geomItem
+            highlighted.addHighlight('custom', new Color(0, 1, 0, 0.1))
+          }
+        } else {
+          if (highlighted) highlighted.removeHighlight('custom')
+          highlighted = null
+        }
+      })
+
+      // /////////////////////////////////////
+      // Prepare to capture images.
+      // renderer.getViewport().getCamera().setPositionAndTarget(new Vec3(2, 2, 2), new Vec3(0, 0, 0.4))
+      window.postMessage('done-loading')
+
+      // {{{ Messages handler.
+      const handleMessage = (event) => {
+        const { data } = event
+
+        if (data === 'variant-01') {
+          renderer.once('redrawOccurred', () => {
+            window.postMessage(`done-${data}`)
+          })
+        } else if (data === 'variant-02') {
+          renderer.once('redrawOccurred', () => {
+            window.postMessage(`done-${data}`)
+          })
+        }
+      }
+
+      window.addEventListener('message', handleMessage, false)
+      // }}}
+    </script>
+  </body>
+</html>
