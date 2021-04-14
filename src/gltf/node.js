@@ -37,7 +37,6 @@ class gltfNode extends GltfObject {
   }
 
   fromJson(json) {
-    console.log(json)
     super.fromJson(json)
   }
 

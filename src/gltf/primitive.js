@@ -228,7 +228,7 @@ class gltfPrimitive extends GltfObject {
         acc[1] += positions[offset + 1]
         acc[2] += positions[offset + 2]
 
-        const point = new Vec3(positions.subarray(offset, 3))
+        const point = new Vec3(positions.subarray(offset, offset + 3))
         meshProxyData.bbox.addPoint(point)
       }
 

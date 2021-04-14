@@ -50,16 +50,21 @@ class glTF extends GltfObject {
     //     element.initGl(gltf, asset)
     //   }
     // }
-    // for (const element of this.textures) {
-    //   if (element !== null && element !== undefined && element.initGl !== undefined) {
-    //     element.initGl(gltf, asset)
-    //   }
-    // }
-    // for (const element of this.samplers) {
-    //   if (element !== null && element !== undefined && element.initGl !== undefined) {
-    //     element.initGl(gltf, asset)
-    //   }
-    // }
+    for (const element of this.images) {
+      if (element !== null && element !== undefined && element.initGl !== undefined) {
+        element.initGl(gltf, asset)
+      }
+    }
+    for (const element of this.samplers) {
+      if (element !== null && element !== undefined && element.initGl !== undefined) {
+        element.initGl(gltf, asset)
+      }
+    }
+    for (const element of this.textures) {
+      if (element !== null && element !== undefined && element.initGl !== undefined) {
+        element.initGl(gltf, asset)
+      }
+    }
     for (const element of this.materials) {
       if (element !== null && element !== undefined && element.initGl !== undefined) {
         element.initGl(gltf, asset)

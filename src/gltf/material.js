@@ -136,6 +136,15 @@ class gltfMaterial extends GltfObject {
   initGl(gltf, webGlContext) {
     this.zeaMaterial = new Material(this.name, 'StandardSurfaceShader')
 
+    const bindImageToMaterialParam = (textureInfo, param) => {
+      const texture = gltf.textures[textureInfo.index]
+      const sampler = gltf.samplers[texture.sampler]
+      const image = gltf.images[texture.source]
+      image.zeaImage.wrapS = sampler.wrapS
+      image.zeaImage.wrapT = sampler.wrapT
+      param.setImage(image.zeaImage)
+    }
+
     if (this.normalTexture !== undefined) {
       this.normalTexture.samplerName = 'u_NormalSampler'
       this.parseTextureInfoExtensions(this.normalTexture, 'Normal')
@@ -143,6 +152,8 @@ class gltfMaterial extends GltfObject {
       this.defines.push('HAS_NORMAL_MAP 1')
       this.properties.set('u_NormalScale', this.normalTexture.scale)
       this.properties.set('u_NormalUVSet', this.normalTexture.texCoord)
+
+      bindImageToMaterialParam(this.normalTexture, this.zeaMaterial.getParameter('Normal'))
     }
 
     if (this.occlusionTexture !== undefined) {
@@ -152,6 +163,8 @@ class gltfMaterial extends GltfObject {
       this.defines.push('HAS_OCCLUSION_MAP 1')
       this.properties.set('u_OcclusionStrength', this.occlusionTexture.strength)
       this.properties.set('u_OcclusionUVSet', this.occlusionTexture.texCoord)
+
+      bindImageToMaterialParam(this.occlusionTexture, this.zeaMaterial.getParameter('AmbientOcclusion'))
     }
 
     this.properties.set('u_EmissiveFactor', this.emissiveFactor)
@@ -161,6 +174,8 @@ class gltfMaterial extends GltfObject {
       this.textures.push(this.emissiveTexture)
       this.defines.push('HAS_EMISSIVE_MAP 1')
       this.properties.set('u_EmissiveUVSet', this.emissiveTexture.texCoord)
+
+      bindImageToMaterialParam(this.emissiveTexture, this.zeaMaterial.getParameter('EmissiveStrength'))
     }
 
     if (this.baseColorTexture !== undefined) {
@@ -169,6 +184,8 @@ class gltfMaterial extends GltfObject {
       this.textures.push(this.baseColorTexture)
       this.defines.push('HAS_BASE_COLOR_MAP 1')
       this.properties.set('u_BaseColorUVSet', this.baseColorTexture.texCoord)
+
+      bindImageToMaterialParam(this.baseColorTexture, this.zeaMaterial.getParameter('BaseColor'))
     }
 
     if (this.metallicRoughnessTexture !== undefined) {
@@ -177,6 +194,8 @@ class gltfMaterial extends GltfObject {
       this.textures.push(this.metallicRoughnessTexture)
       this.defines.push('HAS_METALLIC_ROUGHNESS_MAP 1')
       this.properties.set('u_MetallicRoughnessUVSet', this.metallicRoughnessTexture.texCoord)
+
+      bindImageToMaterialParam(this.metallicRoughnessTexture, this.zeaMaterial.getParameter('Metallic'))
     }
 
     if (this.diffuseTexture !== undefined) {
@@ -185,6 +204,8 @@ class gltfMaterial extends GltfObject {
       this.textures.push(this.diffuseTexture)
       this.defines.push('HAS_DIFFUSE_MAP 1')
       this.properties.set('u_DiffuseUVSet', this.diffuseTexture.texCoord)
+
+      bindImageToMaterialParam(this.diffuseTexture, this.zeaMaterial.getParameter('BaseColor'))
     }
 
     if (this.specularGlossinessTexture !== undefined) {
@@ -193,6 +214,8 @@ class gltfMaterial extends GltfObject {
       this.textures.push(this.specularGlossinessTexture)
       this.defines.push('HAS_SPECULAR_GLOSSINESS_MAP 1')
       this.properties.set('u_SpecularGlossinessUVSet', this.specularGlossinessTexture.texCoord)
+
+      bindImageToMaterialParam(this.specularGlossinessTexture, this.zeaMaterial.getParameter('Reflectance'))
     }
 
     if (this.alphaMode === 'MASK') {
