@@ -45,10 +45,10 @@ Our recommended way to clone this template is by using [degit](https://github.co
 
 ## Live demos
 
-[glTF-Draco/Avocado](./testing-e2e/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Avocado/glTF-Draco/Avocado.gltf)
-[glTF-Draco/Buggy](./testing-e2e/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Buggy/glTF-Draco/Buggy.gltf)
-[glTF/DamagedHelmet](./testing-e2e/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf)
-[glTF/GearboxAssy](./testing-e2e/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/GearboxAssy/glTF/GearboxAssy.gltf)
-[glTF/2CylinderEngine](./testing-e2e/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf)
+[glTF-Draco/Avocado](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Avocado/glTF-Draco/Avocado.gltf)
+[glTF-Draco/Buggy](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Buggy/glTF-Draco/Buggy.gltf)
+[glTF/DamagedHelmet](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf)
+[glTF/GearboxAssy](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/GearboxAssy/glTF/GearboxAssy.gltf)
+[glTF/2CylinderEngine](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf)
     
 
