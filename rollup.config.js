@@ -20,7 +20,7 @@ export default [
     input: 'src/index.js',
     external,
     output: {
-      name: 'myPlugin',
+      name: 'gltfLoader',
       file: pkg.browser,
       format: 'umd',
       sourcemap,

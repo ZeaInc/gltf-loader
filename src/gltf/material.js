@@ -146,74 +146,74 @@ class gltfMaterial extends GltfObject {
     }
 
     if (this.normalTexture !== undefined) {
-      this.normalTexture.samplerName = 'u_NormalSampler'
-      this.parseTextureInfoExtensions(this.normalTexture, 'Normal')
-      this.textures.push(this.normalTexture)
-      this.defines.push('HAS_NORMAL_MAP 1')
-      this.properties.set('u_NormalScale', this.normalTexture.scale)
-      this.properties.set('u_NormalUVSet', this.normalTexture.texCoord)
+      // this.normalTexture.samplerName = 'u_NormalSampler'
+      // this.parseTextureInfoExtensions(this.normalTexture, 'Normal')
+      // this.textures.push(this.normalTexture)
+      // this.defines.push('HAS_NORMAL_MAP 1')
+      // this.properties.set('u_NormalScale', this.normalTexture.scale)
+      // this.properties.set('u_NormalUVSet', this.normalTexture.texCoord)
 
       bindImageToMaterialParam(this.normalTexture, this.zeaMaterial.getParameter('Normal'))
     }
 
     if (this.occlusionTexture !== undefined) {
-      this.occlusionTexture.samplerName = 'u_OcclusionSampler'
-      this.parseTextureInfoExtensions(this.occlusionTexture, 'Occlusion')
-      this.textures.push(this.occlusionTexture)
-      this.defines.push('HAS_OCCLUSION_MAP 1')
-      this.properties.set('u_OcclusionStrength', this.occlusionTexture.strength)
-      this.properties.set('u_OcclusionUVSet', this.occlusionTexture.texCoord)
+      // this.occlusionTexture.samplerName = 'u_OcclusionSampler'
+      // this.parseTextureInfoExtensions(this.occlusionTexture, 'Occlusion')
+      // this.textures.push(this.occlusionTexture)
+      // this.defines.push('HAS_OCCLUSION_MAP 1')
+      // this.properties.set('u_OcclusionStrength', this.occlusionTexture.strength)
+      // this.properties.set('u_OcclusionUVSet', this.occlusionTexture.texCoord)
 
       bindImageToMaterialParam(this.occlusionTexture, this.zeaMaterial.getParameter('AmbientOcclusion'))
     }
 
     this.properties.set('u_EmissiveFactor', this.emissiveFactor)
     if (this.emissiveTexture !== undefined) {
-      this.emissiveTexture.samplerName = 'u_EmissiveSampler'
-      this.parseTextureInfoExtensions(this.emissiveTexture, 'Emissive')
-      this.textures.push(this.emissiveTexture)
-      this.defines.push('HAS_EMISSIVE_MAP 1')
-      this.properties.set('u_EmissiveUVSet', this.emissiveTexture.texCoord)
+      // this.emissiveTexture.samplerName = 'u_EmissiveSampler'
+      // this.parseTextureInfoExtensions(this.emissiveTexture, 'Emissive')
+      // this.textures.push(this.emissiveTexture)
+      // this.defines.push('HAS_EMISSIVE_MAP 1')
+      // this.properties.set('u_EmissiveUVSet', this.emissiveTexture.texCoord)
 
       bindImageToMaterialParam(this.emissiveTexture, this.zeaMaterial.getParameter('EmissiveStrength'))
     }
 
     if (this.baseColorTexture !== undefined) {
-      this.baseColorTexture.samplerName = 'u_BaseColorSampler'
-      this.parseTextureInfoExtensions(this.baseColorTexture, 'BaseColor')
-      this.textures.push(this.baseColorTexture)
-      this.defines.push('HAS_BASE_COLOR_MAP 1')
-      this.properties.set('u_BaseColorUVSet', this.baseColorTexture.texCoord)
+      // this.baseColorTexture.samplerName = 'u_BaseColorSampler'
+      // this.parseTextureInfoExtensions(this.baseColorTexture, 'BaseColor')
+      // this.textures.push(this.baseColorTexture)
+      // this.defines.push('HAS_BASE_COLOR_MAP 1')
+      // this.properties.set('u_BaseColorUVSet', this.baseColorTexture.texCoord)
 
       bindImageToMaterialParam(this.baseColorTexture, this.zeaMaterial.getParameter('BaseColor'))
     }
 
     if (this.metallicRoughnessTexture !== undefined) {
-      this.metallicRoughnessTexture.samplerName = 'u_MetallicRoughnessSampler'
-      this.parseTextureInfoExtensions(this.metallicRoughnessTexture, 'MetallicRoughness')
-      this.textures.push(this.metallicRoughnessTexture)
-      this.defines.push('HAS_METALLIC_ROUGHNESS_MAP 1')
-      this.properties.set('u_MetallicRoughnessUVSet', this.metallicRoughnessTexture.texCoord)
+      // this.metallicRoughnessTexture.samplerName = 'u_MetallicRoughnessSampler'
+      // this.parseTextureInfoExtensions(this.metallicRoughnessTexture, 'MetallicRoughness')
+      // this.textures.push(this.metallicRoughnessTexture)
+      // this.defines.push('HAS_METALLIC_ROUGHNESS_MAP 1')
+      // this.properties.set('u_MetallicRoughnessUVSet', this.metallicRoughnessTexture.texCoord)
 
       bindImageToMaterialParam(this.metallicRoughnessTexture, this.zeaMaterial.getParameter('Metallic'))
     }
 
     if (this.diffuseTexture !== undefined) {
-      this.diffuseTexture.samplerName = 'u_DiffuseSampler'
-      this.parseTextureInfoExtensions(this.diffuseTexture, 'Diffuse')
-      this.textures.push(this.diffuseTexture)
-      this.defines.push('HAS_DIFFUSE_MAP 1')
-      this.properties.set('u_DiffuseUVSet', this.diffuseTexture.texCoord)
+      // this.diffuseTexture.samplerName = 'u_DiffuseSampler'
+      // this.parseTextureInfoExtensions(this.diffuseTexture, 'Diffuse')
+      // this.textures.push(this.diffuseTexture)
+      // this.defines.push('HAS_DIFFUSE_MAP 1')
+      // this.properties.set('u_DiffuseUVSet', this.diffuseTexture.texCoord)
 
       bindImageToMaterialParam(this.diffuseTexture, this.zeaMaterial.getParameter('BaseColor'))
     }
 
     if (this.specularGlossinessTexture !== undefined) {
-      this.specularGlossinessTexture.samplerName = 'u_SpecularGlossinessSampler'
-      this.parseTextureInfoExtensions(this.specularGlossinessTexture, 'SpecularGlossiness')
-      this.textures.push(this.specularGlossinessTexture)
-      this.defines.push('HAS_SPECULAR_GLOSSINESS_MAP 1')
-      this.properties.set('u_SpecularGlossinessUVSet', this.specularGlossinessTexture.texCoord)
+      // this.specularGlossinessTexture.samplerName = 'u_SpecularGlossinessSampler'
+      // this.parseTextureInfoExtensions(this.specularGlossinessTexture, 'SpecularGlossiness')
+      // this.textures.push(this.specularGlossinessTexture)
+      // this.defines.push('HAS_SPECULAR_GLOSSINESS_MAP 1')
+      // this.properties.set('u_SpecularGlossinessUVSet', this.specularGlossinessTexture.texCoord)
 
       bindImageToMaterialParam(this.specularGlossinessTexture, this.zeaMaterial.getParameter('Reflectance'))
     }
@@ -282,7 +282,8 @@ class gltfMaterial extends GltfObject {
         this.properties.set('u_SpecularFactor', specularFactor)
         this.properties.set('u_GlossinessFactor', glossinessFactor)
       }
-
+      /*
+      // TODO: support Clearcoat and Sheen
       // Clearcoat is part of the default metallic-roughness shader
       if (this.extensions.KHR_materials_clearcoat !== undefined) {
         let clearcoatFactor = 0.0
@@ -437,8 +438,8 @@ class gltfMaterial extends GltfObject {
         this.properties.set('u_AttenuationDistance', attenuationDistance)
         this.properties.set('u_ThicknessFactor', thicknessFactor)
       }
+*/
     }
-
     initGlForMembers(this, gltf, webGlContext)
   }
 

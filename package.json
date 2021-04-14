@@ -1,9 +1,8 @@
 {
-  "name": "@fooinc/my-custom-plugin",
-  "libraryName": "MyPlugin",
-  "fileName": "my-custom-plugin",
+  "name": "@zeainc/gltf-loader",
+  "libraryName": "GLTFLoader",
   "author": "Philip Taylor",
-  "description": "A Custom plugin sample for Zea Engine.",
+  "description": "A plugin to load GLTF files in Zea Engine.",
   "version": "0.0.1",
   "license": "MIT",
   "main": "dist/index.cjs.js",
@@ -15,7 +14,9 @@
   "keywords": [
     "WebGL",
     "ES6",
-    "Zea"
+    "Zea",
+    "GLTF",
+    "Draco"
   ],
   "repository": {
     "type": "git",
