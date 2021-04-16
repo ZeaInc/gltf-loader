@@ -1,7 +1,7 @@
 
-# About the GLTF-Loader
+# About the gLTF-Loader
 
-The GLTF loader enables loading of GLTF, GLTF Binary, and GLTF Drako files into Zea Engine.
+The GLTF loader enables loading of gLTF, gLTF Binary, and gLTF Drako files into Zea Engine.
 
 Note: the GLTF Loader plugin does not support all the various advanced material configurations available in GLTF. 
 Features such as sheen, clear-coat are not currently supported, as these would first need to be supported by the engine.
@@ -51,4 +51,5 @@ Our recommended way to clone this template is by using [degit](https://github.co
 * [glTF/GearboxAssy](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/GearboxAssy/glTF/GearboxAssy.gltf)
 * [glTF/2CylinderEngine](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf)
     
-
+## Credits
+Khronos® and Vulkan® are registered trademarks, glTF™ is a trademarks of The Khronos Group Inc.
