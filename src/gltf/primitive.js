@@ -163,13 +163,6 @@ class gltfPrimitive extends GltfObject {
       bbox: new Box3(new Vec3(...positionsAccessor.min), new Vec3(...positionsAccessor.max)),
     }
 
-    if (positionsAccessor.count != positions.length / 3) {
-      // There are geometries where each attribute has a different count, and
-      // I am not sure how to deal with them. Seen in TC050-017-015.glb fromm PulsePLM.
-      // Without these geometries, the data looks fine.
-      return
-    }
-
     if (this.indices !== undefined) {
       const indicesAccessor = gltf.accessors[this.indices]
       const indices = indicesAccessor.getTypedView(gltf)
@@ -187,6 +180,23 @@ class gltfPrimitive extends GltfObject {
             dataType: 'Vec3',
             normalized: false,
             values: typedArray,
+          }
+          if (accessor.count != typedArray.length / 3) {
+            // There are geometries where the typed array length doesn't match the attribute count, and
+            // I am not sure how to deal with them. Seen in TC050-017-015.glb fromm PulsePLM.
+            // e.g. a typed array of 15 for an accessor of count 4. So not 3 * 4 or even 4 * 4.
+            // My only idea is that the values are somehow aligned to a 4 flouat stride, but then missing
+            // the last value for some strange reason.
+            // This hack fixes it, AFAIKS, but maybe its not the correct fix.
+            const fixedPositions = new Float32Array(positionsAccessor.count * 3)
+            let src = 0
+            for (let i = 0; i < typedArray.length; i += 3) {
+              fixedPositions[i] = typedArray[src]
+              fixedPositions[i + 1] = typedArray[src + 1]
+              fixedPositions[i + 2] = typedArray[src + 2]
+              src += 4 // Skip 4 floats instead of 3
+            }
+            geomProxyData.geomBuffers.attrBuffers['positions'].values = fixedPositions
           }
           break
         case 'NORMAL':
