@@ -4,7 +4,7 @@ import { gltfBuffer } from './buffer.js'
 import { gltfBufferView } from './buffer_view.js'
 import { DracoDecoder } from '../ResourceLoader/draco.js'
 import { GL } from '../Renderer/webgl.js'
-import { Box3, Material, MeshProxy, Vec3, GeomItem } from '@zeainc/zea-engine'
+import { Box3, Material, PointsProxy, LinesProxy, MeshProxy, Vec3, GeomItem } from '@zeainc/zea-engine'
 
 class gltfPrimitive extends GltfObject {
   constructor() {
@@ -155,20 +155,25 @@ class gltfPrimitive extends GltfObject {
 
     const positionsAccessor = gltf.accessors[this.attributes.POSITION]
     const positions = positionsAccessor.getTypedView(gltf)
-    const meshProxyData = {
-      name: 'GLTFMesh',
+    const geomProxyData = {
       geomBuffers: {
-        numVertices: positions.length / 3,
+        numVertices: positionsAccessor.count,
         attrBuffers: {},
       },
-      bbox: new Box3(),
+      bbox: new Box3(new Vec3(...positionsAccessor.min), new Vec3(...positionsAccessor.max)),
+    }
+
+    if (positionsAccessor.count != positions.length / 3) {
+      // There are geometries where each attribute has a different count, and
+      // I am not sure how to deal with them. Seen in TC050-017-015.glb fromm PulsePLM.
+      // Without these geometries, the data looks fine.
+      return
     }
 
     if (this.indices !== undefined) {
       const indicesAccessor = gltf.accessors[this.indices]
       const indices = indicesAccessor.getTypedView(gltf)
-      meshProxyData.geomBuffers.indices = indices
-      meshProxyData.geomBuffers.numRenderVerts = meshProxyData.numVertices
+      geomProxyData.geomBuffers.indices = indices
     }
 
     for (const attribute of Object.keys(this.attributes)) {
@@ -178,22 +183,29 @@ class gltfPrimitive extends GltfObject {
 
       switch (attribute) {
         case 'POSITION':
-          meshProxyData.geomBuffers.attrBuffers['positions'] = {
+          geomProxyData.geomBuffers.attrBuffers['positions'] = {
             dataType: 'Vec3',
             normalized: false,
             values: typedArray,
           }
           break
         case 'NORMAL':
-          meshProxyData.geomBuffers.attrBuffers['normals'] = {
+          geomProxyData.geomBuffers.attrBuffers['normals'] = {
             dataType: 'Vec3',
             normalized: true,
             values: typedArray,
           }
           break
         case 'TEXCOORD_0':
-          meshProxyData.geomBuffers.attrBuffers['texCoords'] = {
+          geomProxyData.geomBuffers.attrBuffers['texCoords'] = {
             dataType: 'Vec2',
+            normalized: false,
+            values: typedArray,
+          }
+          break
+        case 'COLOR_0':
+          geomProxyData.geomBuffers.attrBuffers['vertexColors'] = {
+            dataType: 'Color',
             normalized: false,
             values: typedArray,
           }
@@ -201,15 +213,39 @@ class gltfPrimitive extends GltfObject {
       }
     }
 
-    this.computeCentroid(gltf, meshProxyData)
-
-    const meshProxy = new MeshProxy(meshProxyData)
-    const material = gltf.materials[this.material]
-    const geomItem = new GeomItem('Mesh', meshProxy, material.zeaMaterial)
-    parentItem.addChild(geomItem, false)
+    // https://github.com/KhronosGroup/glTF/blob/master/specification/1.0/schema/mesh.primitive.schema.json
+    switch (this.mode) {
+      case 'POINTS':
+      case 0: {
+        geomProxyData.name = 'GLTFPoints'
+        const pointsProxy = new PointsProxy(geomProxyData)
+        const material = gltf.materials[this.material]
+        const geomItem = new GeomItem('Points', pointsProxy, material.zeaMaterial)
+        parentItem.addChild(geomItem, false)
+        break
+      }
+      case 'LINES':
+      case 1: {
+        geomProxyData.name = 'GLTFLines'
+        const linesProxy = new LinesProxy(geomProxyData)
+        const material = gltf.materials[this.material]
+        const geomItem = new GeomItem('Lines', linesProxy, material.zeaMaterial)
+        parentItem.addChild(geomItem, false)
+        break
+      }
+      case 'TRIANGLES':
+      case 4: {
+        geomProxyData.name = 'GLTFMesh'
+        const meshProxy = new MeshProxy(geomProxyData)
+        const material = gltf.materials[this.material]
+        const geomItem = new GeomItem('Mesh', meshProxy, material.zeaMaterial)
+        parentItem.addChild(geomItem, false)
+        break
+      }
+    }
   }
 
-  computeCentroid(gltf, meshProxyData) {
+  computeCentroid(gltf, geomProxyData) {
     const positionsAccessor = gltf.accessors[this.attributes.POSITION]
     const positions = positionsAccessor.getTypedView(gltf)
 
@@ -227,9 +263,6 @@ class gltfPrimitive extends GltfObject {
         acc[0] += positions[offset]
         acc[1] += positions[offset + 1]
         acc[2] += positions[offset + 2]
-
-        const point = new Vec3(positions.subarray(offset, offset + 3))
-        meshProxyData.bbox.addPoint(point)
       }
 
       const centroid = new Float32Array([acc[0] / indices.length, acc[1] / indices.length, acc[2] / indices.length])
