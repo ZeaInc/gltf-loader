@@ -1,20 +1,16 @@
-import { GltfObject } from './gltf_object.js';
+import { GltfObject } from './gltf_object.js'
 
-class gltfVariant extends GltfObject
-{
-    constructor()
-    {
-        super();
-        this.name = undefined;
-    }
+class gltfVariant extends GltfObject {
+  constructor() {
+    super()
+    this.name = undefined
+  }
 
-    fromJson(jsonVariant)
-    {
-        if(jsonVariant.name !== undefined)
-        {
-            this.name = jsonVariant.name;
-        }
+  fromJson(jsonVariant) {
+    if (jsonVariant.name !== undefined) {
+      this.name = jsonVariant.name
     }
+  }
 }
 
-export { gltfVariant as gltfVariant };
+export { gltfVariant as gltfVariant }
