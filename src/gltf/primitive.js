@@ -180,12 +180,7 @@ class gltfPrimitive extends GltfObject {
       if (bufferView.byteStride == 0 || bufferView.byteStride == componentSize * componentCount) {
         typedArray = accessor.getTypedView(gltf)
       } else {
-        try {
-          typedArray = accessor.getDeinterlacedView(gltf)
-        } catch (e) {
-          console.log(e)
-          continue
-        }
+        typedArray = accessor.getDeinterlacedView(gltf)
       }
 
       switch (attribute) {
