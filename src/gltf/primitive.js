@@ -211,10 +211,46 @@ class gltfPrimitive extends GltfObject {
           }
           break
         case 'COLOR_0':
-          geomProxyData.geomBuffers.attrBuffers['vertexColors'] = {
-            dataType: 'Color',
-            normalized: false,
-            values: typedArray,
+          // Using vertex colors to color geometry when all the vertices has the same color is a bit redundant.
+          // In the sample data we have seen so far, we can safely convert vertex colors to a simple material color
+          // and assign the color we pulled out of the vertex colors array.
+          // Note: this reduces the number of shader permutations required, as now we can render using a standard
+          // shader. Because we use multi-draw as much as possible, and lines often make up a large number of small
+          // geometries in our data, we want to use a standard drawing path as much as possible.
+          let allMatching = true
+          for (let i = 1; i < typedArray.length / componentCount; i++) {
+            for (let j = 0; j < componentCount; j++) {
+              if (typedArray[j] != typedArray[i * componentCount + j]) {
+                allMatching = false
+              }
+            }
+          }
+          if (allMatching) {
+            const name = `Material [R=${typedArray[0]}, G=${typedArray[1]}, B=${typedArray[2]}]`
+            if (gltf.materialsMap[name]) {
+              zeaMaterial = gltf.materialsMap[name]
+            } else {
+              const color = new Color()
+              if (componentSize == 1) {
+                color.set(
+                  typedArray[0] / 256,
+                  typedArray[1] / 256,
+                  typedArray[2] / 256,
+                  componentCount == 4 ? typedArray[3] / 256 : 1.0
+                )
+              } else if (componentSize == 4) {
+                color.set(typedArray[0], typedArray[1], typedArray[2], componentCount == 4 ? typedArray[3] : 1.0)
+              }
+              zeaMaterial = zeaMaterial.clone()
+              zeaMaterial.getParameter('BaseColor').setValue(color)
+              gltf.materialsMap[name] = zeaMaterial
+            }
+          } else {
+            geomProxyData.geomBuffers.attrBuffers['vertexColors'] = {
+              dataType: 'Color',
+              normalized: false,
+              values: typedArray,
+            }
           }
           break
       }
@@ -227,14 +263,34 @@ class gltfPrimitive extends GltfObject {
       case 0: {
         geomProxyData.name = 'GLTFPoints'
         geom = new PointsProxy(geomProxyData)
-        zeaMaterial.setShaderName('PointsShader')
+
+        // Reuse Materials if possible. (On mobile, this will improve performance.)
+        const color = zeaMaterial.getParameter('BaseColor').getValue()
+        const name = `PointsMaterial [${color.r.toFixed(2)}, ${color.g.toFixed(2)}, ${color.b.toFixed(2)}]`
+        if (gltf.materialsMap[name]) {
+          zeaMaterial = gltf.materialsMap[name]
+        } else {
+          zeaMaterial = zeaMaterial.clone()
+          zeaMaterial.setShaderName('PointsShader')
+          gltf.materialsMap[name] = zeaMaterial
+        }
         break
       }
       case 'LINES':
       case 1: {
         geomProxyData.name = 'GLTFLines'
         geom = new LinesProxy(geomProxyData)
-        zeaMaterial.setShaderName('LinesShader')
+
+        // Reuse Materials if possible. (On mobile, this will improve performance.)
+        const color = zeaMaterial.getParameter('BaseColor').getValue()
+        const name = `LinesMaterial [R=${color.r.toFixed(2)}, G=${color.g.toFixed(2)}, B=${color.b.toFixed(2)}]`
+        if (gltf.materialsMap[name]) {
+          zeaMaterial = gltf.materialsMap[name]
+        } else {
+          zeaMaterial = zeaMaterial.clone()
+          zeaMaterial.setShaderName('LinesShader')
+          gltf.materialsMap[name] = zeaMaterial
+        }
         break
       }
       case 'TRIANGLES':

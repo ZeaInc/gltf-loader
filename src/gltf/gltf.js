@@ -36,6 +36,7 @@ class glTF extends GltfObject {
     this.buffers = []
     this.bufferViews = []
     this.materials = []
+    this.materialsMap = {}
     this.animations = []
     this.skins = []
     this.path = file
