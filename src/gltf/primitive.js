@@ -4,7 +4,7 @@ import { gltfBuffer } from './buffer.js'
 import { gltfBufferView } from './buffer_view.js'
 import { DracoDecoder } from '../ResourceLoader/draco.js'
 import { GL } from '../Renderer/webgl.js'
-import { Box3, Material, PointsProxy, LinesProxy, MeshProxy, Vec3, GeomItem } from '@zeainc/zea-engine'
+import { Box3, Material, PointsProxy, LinesProxy, MeshProxy, Vec3, GeomItem, Color } from '@zeainc/zea-engine'
 
 class gltfPrimitive extends GltfObject {
   constructor() {
@@ -153,8 +153,9 @@ class gltfPrimitive extends GltfObject {
     }
     */
 
+    let zeaMaterial = gltf.materials[this.material].zeaMaterial
+
     const positionsAccessor = gltf.accessors[this.attributes.POSITION]
-    const positions = positionsAccessor.getTypedView(gltf)
     const geomProxyData = {
       geomBuffers: {
         numVertices: positionsAccessor.count,
@@ -172,7 +173,20 @@ class gltfPrimitive extends GltfObject {
     for (const attribute of Object.keys(this.attributes)) {
       const idx = this.attributes[attribute]
       const accessor = gltf.accessors[idx]
-      const typedArray = accessor.getTypedView(gltf)
+      const bufferView = gltf.bufferViews[accessor.bufferView]
+      const componentSize = accessor.getComponentSize(accessor.componentType)
+      const componentCount = accessor.getComponentCount(accessor.type)
+      let typedArray
+      if (bufferView.byteStride == 0 || bufferView.byteStride == componentSize * componentCount) {
+        typedArray = accessor.getTypedView(gltf)
+      } else {
+        try {
+          typedArray = accessor.getDeinterlacedView(gltf)
+        } catch (e) {
+          console.log(e)
+          continue
+        }
+      }
 
       switch (attribute) {
         case 'POSITION':
@@ -180,23 +194,6 @@ class gltfPrimitive extends GltfObject {
             dataType: 'Vec3',
             normalized: false,
             values: typedArray,
-          }
-          if (accessor.count != typedArray.length / 3) {
-            // There are geometries where the typed array length doesn't match the attribute count, and
-            // I am not sure how to deal with them. Seen in TC050-017-015.glb fromm PulsePLM.
-            // e.g. a typed array of 15 for an accessor of count 4. So not 3 * 4 or even 4 * 4.
-            // My only idea is that the values are somehow aligned to a 4 flouat stride, but then missing
-            // the last value for some strange reason.
-            // This hack fixes it, AFAIKS, but maybe its not the correct fix.
-            const fixedPositions = new Float32Array(positionsAccessor.count * 3)
-            let src = 0
-            for (let i = 0; i < typedArray.length; i += 3) {
-              fixedPositions[i] = typedArray[src]
-              fixedPositions[i + 1] = typedArray[src + 1]
-              fixedPositions[i + 2] = typedArray[src + 2]
-              src += 4 // Skip 4 floats instead of 3
-            }
-            geomProxyData.geomBuffers.attrBuffers['positions'].values = fixedPositions
           }
           break
         case 'NORMAL':
@@ -224,34 +221,32 @@ class gltfPrimitive extends GltfObject {
     }
 
     // https://github.com/KhronosGroup/glTF/blob/master/specification/1.0/schema/mesh.primitive.schema.json
+    let geom
     switch (this.mode) {
       case 'POINTS':
       case 0: {
         geomProxyData.name = 'GLTFPoints'
-        const pointsProxy = new PointsProxy(geomProxyData)
-        const material = gltf.materials[this.material]
-        const geomItem = new GeomItem('Points', pointsProxy, material.zeaMaterial)
-        parentItem.addChild(geomItem, false)
+        geom = new PointsProxy(geomProxyData)
+        zeaMaterial.setShaderName('PointsShader')
         break
       }
       case 'LINES':
       case 1: {
         geomProxyData.name = 'GLTFLines'
-        const linesProxy = new LinesProxy(geomProxyData)
-        const material = gltf.materials[this.material]
-        const geomItem = new GeomItem('Lines', linesProxy, material.zeaMaterial)
-        parentItem.addChild(geomItem, false)
+        geom = new LinesProxy(geomProxyData)
+        zeaMaterial.setShaderName('LinesShader')
         break
       }
       case 'TRIANGLES':
       case 4: {
         geomProxyData.name = 'GLTFMesh'
-        const meshProxy = new MeshProxy(geomProxyData)
-        const material = gltf.materials[this.material]
-        const geomItem = new GeomItem('Mesh', meshProxy, material.zeaMaterial)
-        parentItem.addChild(geomItem, false)
+        geom = new MeshProxy(geomProxyData)
         break
       }
+    }
+    if (geom) {
+      const geomItem = new GeomItem(geomProxyData.name, geom, zeaMaterial)
+      parentItem.addChild(geomItem, false)
     }
   }
 
