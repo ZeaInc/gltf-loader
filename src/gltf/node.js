@@ -1,6 +1,17 @@
 // import { mat4, quat } from 'gl-matrix'
 // import { jsToGl } from './utils.js';
-import { GeomItem, Mat4, MeshProxy, Quat, TreeItem, Vec3, Xfo } from '@zeainc/zea-engine'
+import {
+  BooleanParameter,
+  StringParameter,
+  NumberParameter,
+  GeomItem,
+  Mat4,
+  MeshProxy,
+  Quat,
+  TreeItem,
+  Vec3,
+  Xfo,
+} from '@zeainc/zea-engine'
 import { GltfObject } from './gltf_object.js'
 
 const jsToGl = (values) => {
@@ -41,7 +52,35 @@ class gltfNode extends GltfObject {
   }
 
   initGl(gltf, parent) {
-    const treeItem = new TreeItem(this.name)
+    let treeItem
+    if (this.extras) {
+      if (window.zeaCad) {
+        // Note: For tool to work the same on zcad data as GLTF, the data should try to use CADBodes
+        // when weh can determine that the object is a body.
+        const { CADBody } = zeaCad
+        treeItem = new CADBody(this.name)
+      } else {
+        treeItem = new TreeItem(this.name)
+      }
+      for (let key in this.extras) {
+        const value = this.extras[key]
+        if (typeof value == 'string') {
+          treeItem.addParameter(new StringParameter(key, value))
+        } else if (typeof value == 'boolean') {
+          treeItem.addParameter(new BooleanParameter(key, value))
+        } else if (typeof value == 'number') {
+          treeItem.addParameter(new NumberParameter(key, value))
+        } else if (typeof value == 'object') {
+          treeItem.addParameter(new Parameter(key, value, 'json'))
+        }
+      }
+      // Note: zcad files add metadata as parameters, but GLTF just uses this JSON object.
+      // For tool to work the same on zcad data as GLTF, the data should be assigned ini the same way.
+      // Note: as we migrate to WebAssembly, using json won't be an option.
+      treeItem.extras = this.extras
+    } else {
+      treeItem = new TreeItem(this.name)
+    }
 
     const xfo = new Xfo()
     if (this.matrix !== undefined) {
