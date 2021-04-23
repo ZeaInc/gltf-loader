@@ -153,7 +153,8 @@ class gltfPrimitive extends GltfObject {
     }
     */
 
-    let zeaMaterial = gltf.materials[this.material].zeaMaterial
+    const material = gltf.materials[this.material]
+    let zeaMaterial = material.zeaMaterial
 
     const positionsAccessor = gltf.accessors[this.attributes.POSITION]
     const geomProxyData = {
@@ -296,6 +297,12 @@ class gltfPrimitive extends GltfObject {
       }
     }
     if (geom) {
+      if (material.alphaMode == 'OPAQUE') {
+        const color = zeaMaterial.getParameter('BaseColor').getValue()
+        color.a = 1.0
+        zeaMaterial.getParameter('BaseColor').setValue(color)
+      }
+
       const geomItem = new GeomItem(geomProxyData.name, geom, zeaMaterial)
       parentItem.addChild(geomItem, false)
     }
