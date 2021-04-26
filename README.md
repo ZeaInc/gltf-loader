@@ -1,9 +1,15 @@
 
-# About the gLTF-Loader
+# About the glTF-Loader
 
-The gLTF loader enables loading of gLTF, gLTF Binary, and gLTF Drako files into Zea Engine.
+![DamagedHelmet](images/DamagedHelmet.png)
 
-Note: the gLTF Loader plugin does not support all the various advanced material configurations available in gLTF. 
+The glTF loader enables loading of glTF, glTF Binary, and glTF Drako files into Zea Engine.
+
+This loader is based heavily on the reference glTF loading implementation from the Khronos Group and has been integrated as a plugin for the Zea Engine. As such, the code was modified to align with some of the design goals behind the Zea engine.
+https://github.com/KhronosGroup/glTF
+
+
+Note: the glTF Loader plugin does not support all the various advanced material configurations available in glTF. 
 Features such as sheen, clear-coat are not currently supported, as these would first need to be supported by the engine.
 
 
@@ -20,16 +26,19 @@ Our recommended way to clone this template is by using [degit](https://github.co
   <script src="https://cdn.jsdelivr.net/npm/@zeainc/gltf-loader/dist/index.umd.js"></script>
 ```
 
-2. After creating the scene and renderer, you can create GLTF assets and load gltf files.
+2. After creating the scene and renderer, you can instantiate a GLTFAsset class and use that to load glTF files.
 
 ```javascript
   const asset = new GLTFAsset('gltf')
-  asset.loadGltf('url/to/file.gtlf').then(() => {
+  asset.load('url/to/file.gtlf').then(() => {
     console.log('Loading done')
     renderer.frameAll()
   })
   scene.getRoot().addChild(asset)
 ```
+
+A more fully featured glTF loading sample can be found in this projects GitHub repository. 
+https://github.com/ZeaInc/gltf-loader/blob/main/gltf-asset-test.html
 
 
 ## Building and testing the Plugin
@@ -45,11 +54,13 @@ Our recommended way to clone this template is by using [degit](https://github.co
 
 ## Live demos
 
-* [glTF-Draco/Avocado](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Avocado/glTF-Draco/Avocado.gltf)
-* [glTF-Draco/Buggy](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Buggy/glTF-Draco/Buggy.gltf)
-* [glTF/DamagedHelmet](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf)
-* [glTF/GearboxAssy](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/GearboxAssy/glTF/GearboxAssy.gltf)
-* [glTF/2CylinderEngine](http://docs.zea.live/gltf-loader//gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf)
+The following live demos load glTF assets from the KronosGroup github project directly. You can modify the URL to load your own data.
+
+* [glTF-Draco/Avocado](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Avocado/glTF-Draco/Avocado.gltf)
+* [glTF-Draco/Buggy](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Buggy/glTF-Draco/Buggy.gltf&y2zup)
+* [glTF/DamagedHelmet](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf&y2zup)
+* [glTF/GearboxAssy](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/GearboxAssy/glTF/GearboxAssy.gltf&y2zup)
+* [glTF/2CylinderEngine](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf&y2zup)
     
 ## Credits
 Khronos® and Vulkan® are registered trademarks, gLTF™ is a trademark of The Khronos Group Inc.
