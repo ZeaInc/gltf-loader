@@ -54,17 +54,16 @@ class GLTFAsset extends TreeItem {
   }
 
   /**
-   * loadGltf asynchroneously and create resources for rendering
-   * @param {(String | ArrayBuffer | File)} gltfFile the .gltf or .glb file either as path or as preloaded resource. In node.js environments, only ArrayBuffer types are accepted.
-   * @param {File[]} [externalFiles] additional files containing resources that are referenced in the gltf
+   * loads a GLTF asset an builds the scene tree ready for rendering.
    * @returns {Promise} a promise that fulfills when the gltf file was loaded
    */
-  async loadGltf(gltfFile, externalFiles) {
+  async load(gltfFile) {
     let isGlb = undefined
     let buffers = undefined
     let json = undefined
     let data = undefined
     let filename = ''
+    resourceLoader.incrementWorkload(1)
     if (typeof gltfFile === 'string') {
       isGlb = getIsGlb(gltfFile)
       //  let response = await axios.get(gltfFile, { responseType: isGlb ? "arraybuffer" : "json" });
@@ -72,24 +71,6 @@ class GLTFAsset extends TreeItem {
       json = response
       data = response
       filename = gltfFile
-    } else if (gltfFile instanceof ArrayBuffer) {
-      isGlb = externalFiles === undefined
-      if (isGlb) {
-        data = gltfFile
-      } else {
-        console.error('Only .glb files can be loaded from an array buffer')
-      }
-    } else if (typeof File !== 'undefined' && gltfFile instanceof File) {
-      let fileContent = gltfFile
-      filename = gltfFile.name
-      isGlb = getIsGlb(filename)
-      if (isGlb) {
-        data = await AsyncFileReader.readAsArrayBuffer(fileContent)
-      } else {
-        data = await AsyncFileReader.readAsText(fileContent)
-        json = JSON.parse(data)
-        buffers = externalFiles
-      }
     } else {
       console.error('Passed invalid type to loadGltf ' + typeof gltfFile)
     }
@@ -113,6 +94,8 @@ class GLTFAsset extends TreeItem {
     }
 
     await gltfLoader.load(gltf, this, buffers)
+
+    resourceLoader.incrementWorkDone(1)
 
     return gltf
   }
