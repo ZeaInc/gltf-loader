@@ -85,7 +85,7 @@
       const urlParams = new URLSearchParams(window.location.search)
       if (urlParams.has('gltf')) {
         const asset = new GLTFAsset('gltf')
-        asset.loadGltf(urlParams.get('gltf')).then(() => {
+        asset.load(urlParams.get('gltf')).then(() => {
           console.log('Loading done')
 
           const xfo = new Xfo() //asset.getParameter('LocalXfo').getValue()
