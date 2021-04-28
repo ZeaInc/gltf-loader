@@ -292,6 +292,63 @@ class gltfPrimitive extends GltfObject {
       case 'TRIANGLES':
       case 4: {
         geomProxyData.name = 'GLTFMesh'
+
+        // if (geomProxyData.geomBuffers.indices.length > 64) return
+
+        const computeFaceVertexNormals = (indices, positions) => {
+          const getVertex = (index) => {
+            const start = index * 3
+            return new Vec3(positions.subarray(start, start + 3))
+          }
+          const faceNormals = new Float32Array(indices.length)
+          const getFaceNormalRef = (index) => {
+            const start = index * 3
+            return new Vec3(faceNormals.subarray(start, start + 3))
+          }
+          for (let i = 0; i < indices.length; i += 3) {
+            const v0 = getVertex(indices[i + 0])
+            const v1 = getVertex(indices[i + 1])
+            const v2 = getVertex(indices[i + 2])
+            const normal = v2.subtract(v0).cross(v1.subtract(v0))
+            normal.normalizeInPlace()
+            const faceNormal = getFaceNormalRef(i / 3)
+            faceNormal.setFromOther(normal)
+          }
+          const vertexNormals = new Float32Array(positions.length)
+          const getVertexNormalRef = (index) => {
+            const start = index * 3
+            return new Vec3(vertexNormals.subarray(start, start + 3))
+          }
+          const vertexFaces = {}
+          for (let i = 0; i < indices.length; i++) {
+            const faceIndex = i / 3
+            const vertexIndex = indices[i]
+            if (!vertexFaces[vertexIndex]) vertexFaces[vertexIndex] = [faceIndex]
+            else vertexFaces[vertexIndex].push(faceIndex)
+          }
+          for (let i = 0; i < indices.length; i += 3) {
+            const faceNormal = getFaceNormalRef(i / 3)
+            getVertexNormalRef(indices[i + 0]).addInPlace(faceNormal)
+            getVertexNormalRef(indices[i + 1]).addInPlace(faceNormal)
+            getVertexNormalRef(indices[i + 2]).addInPlace(faceNormal)
+          }
+          for (let i = 0; i < vertexNormals.length; i += 3) {
+            getVertexNormalRef(i / 3).normalizeInPlace()
+          }
+          return {
+            dataType: 'Vec3',
+            normalized: true,
+            values: vertexNormals,
+          }
+        }
+
+        if (!geomProxyData.geomBuffers.attrBuffers['normals']) {
+          geomProxyData.geomBuffers.attrBuffers['normals'] = computeFaceVertexNormals(
+            geomProxyData.geomBuffers.indices,
+            geomProxyData.geomBuffers.attrBuffers['positions'].values
+          )
+        }
+
         geom = new MeshProxy(geomProxyData)
         break
       }
