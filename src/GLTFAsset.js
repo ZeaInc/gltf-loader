@@ -93,6 +93,9 @@ class GLTFAsset extends TreeItem {
       image.resolveRelativePath(getContainingFolder(gltf.path))
     }
 
+    // For each node we process, we will increment the progress bar.
+    resourceLoader.incrementWorkload(gltf.nodes.length)
+
     await gltfLoader.load(gltf, this, buffers)
 
     resourceLoader.incrementWorkDone(1)

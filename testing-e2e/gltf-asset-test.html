@@ -14,7 +14,19 @@
     <canvas class="full-size" id="app"></canvas>
 
     <script type="module">
-      const { GLRenderer, Scene, Vec3, Xfo, Color, Sphere, Material, GeomItem, GLBoundingBoxPass, EnvMap } = zeaEngine
+      const {
+        GLRenderer,
+        Scene,
+        Vec3,
+        Xfo,
+        Color,
+        Sphere,
+        Material,
+        GeomItem,
+        GLBoundingBoxPass,
+        EnvMap,
+        resourceLoader,
+      } = zeaEngine
 
       const scene = new Scene()
       const renderer = new GLRenderer(document.getElementById('app'), { hideSplash: true, xrCompatible: false })
@@ -40,10 +52,19 @@
       // TreeItem to the scene tree
       const { GLTFAsset } = gltfLoader
 
+      let prevProgress = 0
+      resourceLoader.on('progressIncremented', (event) => {
+        const percent = Math.round(event.percent)
+        if (percent != prevProgress) {
+          console.log(percent)
+          prevProgress = percent
+        }
+      })
+
       const urlParams = new URLSearchParams(window.location.search)
       if (urlParams.has('gltf')) {
         const asset = new GLTFAsset('gltf')
-        asset.loadGltf(urlParams.get('gltf')).then(() => {
+        asset.load(urlParams.get('gltf')).then(() => {
           console.log('Loading done')
           renderer.frameAll()
         })
