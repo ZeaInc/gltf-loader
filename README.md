@@ -5,7 +5,7 @@
 
 The glTF loader enables loading of glTF, glTF Binary, and glTF Drako files into Zea Engine.
 
-This loader is based heavily on the reference glTF loading implementation from the Khronos Group and has been integrated as a plugin for the Zea Engine. As such, the code was modified to align with some of the design goals behind the Zea engine.
+This loader is based heavily on the reference glTF loading implementation from the Khronos Group and has been integrated as a plugin for the Zea Engine. As such, the code was modified to align with some of the design goals behind the Zea Engine.
 https://github.com/KhronosGroup/glTF
 
 
@@ -37,7 +37,7 @@ Our recommended way to clone this template is by using [degit](https://github.co
   scene.getRoot().addChild(asset)
 ```
 
-A more fully featured glTF loading sample can be found in this projects GitHub repository. 
+A fully featured glTF loading sample can be found in this projects GitHub repository. 
 https://github.com/ZeaInc/gltf-loader/blob/main/gltf-asset-test.html
 
 
@@ -54,7 +54,7 @@ https://github.com/ZeaInc/gltf-loader/blob/main/gltf-asset-test.html
 
 ## Live demos
 
-The following live demos load glTF assets from the KronosGroup github project directly. You can modify the URL to load your own data.
+The following live demos load glTF assets from the Kronos Group github project directly. You can modify the URL to load your own data.
 
 * [glTF-Draco/Avocado](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Avocado/glTF-Draco/Avocado.gltf)
 * [glTF-Draco/Buggy](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/Buggy/glTF-Draco/Buggy.gltf&y2zup)
@@ -63,4 +63,4 @@ The following live demos load glTF assets from the KronosGroup github project di
 * [glTF/2CylinderEngine](http://docs.zea.live/gltf-loader/gltf-asset-test.html?gltf=https://github.khronos.org/glTF-Sample-Viewer-Release/assets/models/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf&y2zup)
     
 ## Credits
-Khronos® and Vulkan® are registered trademarks, gLTF™ is a trademark of The Khronos Group Inc.
+Khronos® and Vulkan® are registered trademarks, glTF™ is a trademark of The Khronos Group Inc.
