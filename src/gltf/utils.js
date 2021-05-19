@@ -21,7 +21,7 @@ function jsToGlSlice(array, offset, stride) {
   return tensor
 }
 
-function initGlForMembers(gltfObj, gltf, webGlContext) {
+function initGlForMembers(gltfObj, gltf, parentItem, buffers) {
   for (const name of Object.keys(gltfObj)) {
     const member = gltfObj[name]
 
@@ -29,12 +29,12 @@ function initGlForMembers(gltfObj, gltf, webGlContext) {
       continue
     }
     if (member.initGl !== undefined) {
-      member.initGl(gltf, webGlContext)
+      member.initGl(gltf, parentItem, buffers)
     }
     if (Array.isArray(member)) {
       for (const element of member) {
         if (element !== null && element !== undefined && element.initGl !== undefined) {
-          element.initGl(gltf, webGlContext)
+          element.initGl(gltf, parentItem, buffers)
         }
       }
     }

@@ -33,12 +33,12 @@ class gltfMesh extends GltfObject {
     return this.weightsAnimated !== undefined ? this.weightsAnimated : this.weights
   }
 
-  initGl(gltf, parentItem) {
-    // super.initGl(gltf, parentItem)
+  initGl(gltf, parentItem, buffers) {
+    // super.initGl(gltf, parentItem, buffers)
     // console.log(this.name)
 
     this.primitives.forEach((primitive) => {
-      primitive.initGl(gltf, parentItem)
+      primitive.initGl(gltf, parentItem, buffers)
       // const geomItem = new GeomItem(this.name, mesh, material, xfo)
     })
   }

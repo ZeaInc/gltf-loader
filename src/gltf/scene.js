@@ -11,7 +11,7 @@ class gltfScene extends GltfObject {
     this.imageBasedLight = undefined
   }
 
-  initGl(gltf, asset) {
+  initGl(gltf, asset, buffers) {
     // super.initGl(gltf, asset)
 
     if (this.extensions !== undefined && this.extensions.KHR_lights_image_based !== undefined) {
@@ -21,7 +21,7 @@ class gltfScene extends GltfObject {
 
     this.nodes.forEach((index) => {
       const childNode = gltf.nodes[index]
-      childNode.initGl(gltf, asset)
+      childNode.initGl(gltf, asset, buffers)
     })
   }
 

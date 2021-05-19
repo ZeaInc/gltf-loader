@@ -52,10 +52,10 @@ class gltfNode extends GltfObject {
     super.fromJson(json)
   }
 
-  initGl(gltf, parent) {
+  initGl(gltf, parentItem, buffers) {
     let treeItem
     if (this.extras) {
-      if (window.zeaCad) {
+      if (window.zeaCad && this.mesh != undefined) {
         // Note: For tool to work the same on zcad data as GLTF, the data should try to use CADBodes
         // when weh can determine that the object is a body.
         const { CADBody } = zeaCad
@@ -109,9 +109,9 @@ class gltfNode extends GltfObject {
 
     if (this.mesh != undefined) {
       const mesh = gltf.meshes[this.mesh]
-      mesh.initGl(gltf, treeItem)
+      mesh.initGl(gltf, treeItem, buffers)
     }
-    parent.addChild(treeItem, false)
+    parentItem.addChild(treeItem, false)
 
     resourceLoader.incrementWorkDone(1)
   }

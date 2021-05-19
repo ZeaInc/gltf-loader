@@ -42,38 +42,42 @@ class glTF extends GltfObject {
     this.path = file
   }
 
-  initGl(asset) {
-    // initGlForMembers(this, this, asset);
+  initGl(asset, buffers) {
+    // initGlForMembers(this, this, asset, buffers);
 
     const gltf = this
     // for (const element of this.meshes) {
     //   if (element !== null && element !== undefined && element.initGl !== undefined) {
-    //     element.initGl(gltf, asset)
+    //     element.initGl(gltf, asset, buffers)
     //   }
     // }
     for (const element of this.images) {
       if (element !== null && element !== undefined && element.initGl !== undefined) {
-        element.initGl(gltf, asset)
+        element.initGl(gltf, asset, buffers)
       }
     }
     for (const element of this.samplers) {
       if (element !== null && element !== undefined && element.initGl !== undefined) {
-        element.initGl(gltf, asset)
+        element.initGl(gltf, asset, buffers)
       }
     }
     for (const element of this.textures) {
       if (element !== null && element !== undefined && element.initGl !== undefined) {
-        element.initGl(gltf, asset)
+        element.initGl(gltf, asset, buffers)
       }
     }
     for (const element of this.materials) {
       if (element !== null && element !== undefined && element.initGl !== undefined) {
-        element.initGl(gltf, asset)
+        element.initGl(gltf, asset, buffers)
       }
     }
 
+    gltf.extensions = {}
+    gltf.extensions['EXT_meshopt_compression'] = asset.meshoptDecoder
+    gltf.extensions['EXT_meshopt_compression'] = asset.meshoptDecoder
+
     const scene = this.scenes[this.scene]
-    scene.initGl(this, asset)
+    scene.initGl(this, asset, buffers)
   }
 
   fromJson(json) {

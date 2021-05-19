@@ -18,6 +18,7 @@ import { AsyncFileReader } from './ResourceLoader/async_file_reader.js'
 
 import { DracoDecoder } from './ResourceLoader/draco.js'
 import { KtxDecoder } from './ResourceLoader/ktx.js'
+import { MeshoptDecoder } from './libs/meshopt_decoder.module.js'
 
 import { loadHDR } from './libs/hdrpng.js'
 
@@ -37,8 +38,6 @@ class GLTFAsset extends TreeItem {
    */
   constructor(name) {
     super(name)
-
-    this.init()
   }
 
   /**
@@ -48,9 +47,10 @@ class GLTFAsset extends TreeItem {
    * @param {Object} [externalKtxLib] optional object of an external KTX library, e.g. from a CDN
    * @returns {ResourceLoader} ResourceLoader
    */
-  init(externalDracoLib = undefined, externalKtxLib = undefined) {
+  async init(externalDracoLib = undefined, externalKtxLib = undefined) {
     this.initKtxLib(externalKtxLib)
     this.initDracoLib(externalDracoLib)
+    this.initMeshOptsLib()
   }
 
   /**
@@ -58,6 +58,7 @@ class GLTFAsset extends TreeItem {
    * @returns {Promise} a promise that fulfills when the gltf file was loaded
    */
   async load(gltfFile) {
+    await this.init()
     let isGlb = undefined
     let buffers = undefined
     let json = undefined
@@ -148,6 +149,16 @@ class GLTFAsset extends TreeItem {
     const dracoDecoder = new DracoDecoder(externalDracoLib)
     if (dracoDecoder !== undefined) {
       await dracoDecoder.ready()
+    }
+  }
+
+  /**
+   * initMeshOptsLib must be called before loading gltf files with MeshOpt meshes
+   */
+  async initMeshOptsLib() {
+    this.meshoptDecoder = MeshoptDecoder
+    if (this.meshoptDecoder !== undefined) {
+      await this.meshoptDecoder.ready
     }
   }
 }

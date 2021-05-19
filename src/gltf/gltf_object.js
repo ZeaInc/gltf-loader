@@ -11,8 +11,8 @@ class GltfObject {
     fromKeys(this, json)
   }
 
-  initGl(gltf, webGlContext) {
-    initGlForMembers(this, gltf, webGlContext)
+  initGl(gltf, asset, buffers) {
+    initGlForMembers(this, gltf, asset, buffers)
   }
 }
 

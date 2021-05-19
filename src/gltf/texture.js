@@ -15,12 +15,12 @@ class gltfTexture extends GltfObject {
     this.mipLevelCount = 0
   }
 
-  initGl(gltf, webGlContext) {
+  initGl(gltf, asset, buffers) {
     if (this.sampler === undefined) {
       this.sampler = gltf.samplers.length - 1
     }
 
-    initGlForMembers(this, gltf, webGlContext)
+    initGlForMembers(this, gltf, asset, buffers)
   }
 
   fromJson(jsonTexture) {
@@ -62,8 +62,8 @@ class gltfTextureInfo {
     this.extensions = undefined
   }
 
-  initGl(gltf, webGlContext) {
-    initGlForMembers(this, gltf, webGlContext)
+  initGl(gltf, asset, buffers) {
+    initGlForMembers(this, gltf, asset, buffers)
   }
 
   fromJson(jsonTextureInfo) {

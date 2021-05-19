@@ -40,7 +40,7 @@ class gltfPrimitive extends GltfObject {
     this.centroid = undefined
   }
 
-  initGl(gltf, parentItem) {
+  initGl(gltf, parentItem, buffers) {
     // Use the default glTF material.
     if (this.material === undefined) {
       this.material = gltf.materials.length - 1
@@ -177,7 +177,7 @@ class gltfPrimitive extends GltfObject {
 
     if (this.indices !== undefined) {
       const indicesAccessor = gltf.accessors[this.indices]
-      const indices = indicesAccessor.getTypedView(gltf)
+      const indices = indicesAccessor.getTypedView(gltf, buffers)
       geomProxyData.geomBuffers.indices = indices
     }
 

@@ -8,8 +8,9 @@ class gltfLoader {
     await buffersPromise // images might be stored in the buffers
     const imagesPromise = gltfLoader.loadImages(gltf, additionalFiles)
 
-    return await Promise.all([buffersPromise, imagesPromise]).then(() => {
-      gltf.initGl(asset)
+    return await Promise.all([buffersPromise, imagesPromise]).then((data) => {
+      console.log(data)
+      gltf.initGl(asset, buffers)
     })
   }
 

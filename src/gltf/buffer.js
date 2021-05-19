@@ -68,6 +68,17 @@ class gltfBuffer extends GltfObject {
 
     return true
   }
+
+  initGl(gltf, parentItem, buffers) {
+    super.initGl(gltf, parentItem, buffers)
+
+    // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#meshes
+
+    if (this.extensions !== undefined) {
+      if (this.extensions.KHR_draco_mesh_compression !== undefined) {
+      }
+    }
+  }
 }
 
 export { gltfBuffer }

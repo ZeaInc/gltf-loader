@@ -1,6 +1,38 @@
 import { GL } from '../Renderer/webgl.js'
 import { GltfObject } from './gltf_object.js'
 
+const WEBGL_COMPONENT_TYPES = {}
+WEBGL_COMPONENT_TYPES[GL.BYTE] = Int8Array
+WEBGL_COMPONENT_TYPES[GL.UNSIGNED_BYTE] = Uint8Array
+WEBGL_COMPONENT_TYPES[GL.SHORT] = Int16Array
+WEBGL_COMPONENT_TYPES[GL.UNSIGNED_SHORT] = Uint16Array
+WEBGL_COMPONENT_TYPES[GL.UNSIGNED_INT] = Uint32Array
+WEBGL_COMPONENT_TYPES[GL.FLOAT] = Float32Array
+
+const WEBGL_TYPE_SIZES = {
+  MAT2: 4,
+  MAT3: 9,
+  MAT4: 16,
+  SCALAR: 1,
+  VEC2: 2,
+  VEC3: 3,
+  VEC4: 4,
+}
+
+function decode16BitFloat(h) {
+  const s = (h & 0x8000) >> 15
+  const e = (h & 0x7c00) >> 10
+  const f = h & 0x03ff
+
+  if (e == 0) {
+    return (s ? -1 : 1) * Math.pow(2, -14) * (f / Math.pow(2, 10))
+  } else if (e == 0x1f) {
+    return f ? NaN : (s ? -1 : 1) * Infinity
+  }
+
+  return (s ? -1 : 1) * Math.pow(2, e - 15) * (1 + f / Math.pow(2, 10))
+}
+
 class gltfAccessor extends GltfObject {
   constructor() {
     super()
@@ -25,7 +57,7 @@ class gltfAccessor extends GltfObject {
 
   // getTypedView provides a view to the accessors data in form of
   // a TypedArray. This data can directly be passed to vertexAttribPointer
-  getTypedView(gltf) {
+  getTypedView(gltf, buffers) {
     if (this.typedView !== undefined) {
       return this.typedView
     }
@@ -34,6 +66,38 @@ class gltfAccessor extends GltfObject {
       const bufferView = gltf.bufferViews[this.bufferView]
       const buffer = gltf.buffers[bufferView.buffer]
       const byteOffset = this.byteOffset + bufferView.byteOffset
+
+      if (bufferView.extensions && bufferView.extensions['EXT_meshopt_compression']) {
+        const extensionDef = bufferView.extensions['EXT_meshopt_compression']
+        const decoder = gltf.extensions['EXT_meshopt_compression']
+
+        const byteOffset = extensionDef.byteOffset || 0
+        const byteLength = extensionDef.byteLength || 0
+
+        const count = extensionDef.count
+        const stride = extensionDef.byteStride
+
+        const result = new ArrayBuffer(count * stride)
+        const source = new Uint8Array(buffers[0], byteOffset, byteLength)
+
+        decoder.decodeGltfBuffer(new Uint8Array(result), count, stride, source, extensionDef.mode, extensionDef.filter)
+
+        const itemSize = WEBGL_TYPE_SIZES[this.type]
+        const TypedArray = WEBGL_COMPONENT_TYPES[this.componentType]
+        const elementBytes = TypedArray.BYTES_PER_ELEMENT
+        const itemBytes = elementBytes * itemSize
+        const byteStride = this.bufferView !== undefined ? gltf.bufferViews[this.bufferView].byteStride : undefined
+        if (byteStride && byteStride !== itemBytes) {
+          console.log(byteStride, itemBytes)
+        }
+
+        console.log(byteStride, itemBytes)
+
+        buffer.buffer = result
+
+        this.typedView = new TypedArray(result, this.byteOffset, this.count * itemSize)
+        return this.typedView
+      }
 
       const componentSize = this.getComponentSize(this.componentType)
       let componentCount = this.getComponentCount(this.type)
@@ -135,8 +199,14 @@ class gltfAccessor extends GltfObject {
           func = dv.getInt16.bind(dv)
           break
         case GL.UNSIGNED_SHORT:
-          this.filteredView = new Uint16Array(arrayLength)
-          func = dv.getUint16.bind(dv)
+          // this.filteredView = new Uint16Array(arrayLength)
+          // func = dv.getUint16.bind(dv)
+          this.filteredView = new Float32Array(arrayLength)
+          func = (index) => {
+            if (index > arrayLength) return 0.0
+            const val = dv.getUint16(index)
+            return decode16BitFloat(val)
+          }
           break
         case GL.UNSIGNED_INT:
           this.filteredView = new Uint32Array(arrayLength)
@@ -150,7 +220,7 @@ class gltfAccessor extends GltfObject {
 
       for (let i = 0; i < arrayLength; ++i) {
         let offset = Math.floor(i / componentCount) * stride + (i % componentCount) * componentSize
-        this.filteredView[i] = func(offset, true)
+        this.filteredView[i] = func(offset)
       }
     }
 
