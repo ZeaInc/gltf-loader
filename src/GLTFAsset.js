@@ -55,22 +55,26 @@ class GLTFAsset extends TreeItem {
 
   /**
    * loads a GLTF asset an builds the scene tree ready for rendering.
+   * @param {Object} url The url of the GLTF file to load.
+   * @param {Object} [filename] the filename of the file, if not part of the URL, e.g. for a dropped file.
    * @returns {Promise} a promise that fulfills when the gltf file was loaded
    */
-  async load(gltfFile) {
+  async load(url, filename) {
+    await this.init()
     let isGlb = undefined
     let buffers = undefined
     let json = undefined
     let data = undefined
-    let filename = ''
+    if (!filename) {
+      filename = url
+    }
     resourceLoader.incrementWorkload(1)
-    if (typeof gltfFile === 'string') {
-      isGlb = getIsGlb(gltfFile)
-      //  let response = await axios.get(gltfFile, { responseType: isGlb ? "arraybuffer" : "json" });
-      let response = await resourceLoader.loadFile(isGlb ? 'binary' : 'json', gltfFile)
+    if (typeof url === 'string') {
+      isGlb = getIsGlb(filename)
+      //  let response = await axios.get(url, { responseType: isGlb ? "arraybuffer" : "json" });
+      let response = await resourceLoader.loadFile(isGlb ? 'binary' : 'json', url)
       json = response
       data = response
-      filename = gltfFile
     } else {
       console.error('Passed invalid type to loadGltf ' + typeof gltfFile)
     }
