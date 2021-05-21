@@ -21,6 +21,7 @@ Our recommended way to clone this template is by using [degit](https://github.co
 
 ```html
   <script src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine/dist/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine/dist/plugins.umd.min.js"></script>
 
   <script src="https://www.gstatic.com/draco/v1/decoders/draco_decoder_gltf.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@zeainc/gltf-loader/dist/index.umd.js"></script>
