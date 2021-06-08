@@ -11,6 +11,7 @@ import {
   TreeItem,
   Vec3,
   Xfo,
+  resourceLoader,
 } from '@zeainc/zea-engine'
 import { GltfObject } from './gltf_object.js'
 
@@ -111,6 +112,8 @@ class gltfNode extends GltfObject {
       mesh.initGl(gltf, treeItem)
     }
     parent.addChild(treeItem, false)
+
+    resourceLoader.incrementWorkDone(1)
   }
 
   applyMatrix(matrixData) {

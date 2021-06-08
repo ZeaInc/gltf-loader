@@ -42,6 +42,14 @@
     <canvas id="canvas"></canvas>
     <div class="fps-display" id="fps"></div>
     <progress class="progress-display" id="progress" value="0" max="100">0%</progress>
+    <div id="dropZoneWrapper">
+      <div id="dropZone">
+      <form class="my-form">
+        <p>Drag and drop a GLTF file to view</p>
+        <input type="file" id="fileElem" multiple accept="*.glb" onchange="handleFiles(this.files)" />
+        <label class="button" for="fileElem">Select a GLTF file</label>
+      </form>
+    </div>
 
     <script type="module">
       const {
@@ -82,27 +90,33 @@
       // TreeItem to the scene tree
       const { GLTFAsset } = gltfLoader
 
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.has('gltf')) {
-        const asset = new GLTFAsset('gltf')
-        asset.load(urlParams.get('gltf')).then(() => {
-          console.log('Loading done')
+      const loadGLTF = (url, filename) => {
 
-          const xfo = new Xfo() //asset.getParameter('LocalXfo').getValue()
+        document.getElementById('dropZone').classList.add('hidden')
+
+        const asset = new GLTFAsset('gltf')
+        asset.load(url, filename).then(() => {
+          console.log('Loading done')
+          const xfo = new Xfo()
+          const box = asset.getParameter('BoundingBox').getValue()
           if (urlParams.has('y2zup')) {
             xfo.ori.setFromAxisAndAngle(new Vec3(1, 0, 0), Math.PI * 0.5)
+            xfo.tr.z = -box.p0.y
+          } else {
+            xfo.tr.z = -box.p0.z
           }
-          const box = asset.getParameter('BoundingBox').getValue()
-          xfo.tr.z = -box.p0.z
           asset.getParameter('LocalXfo').setValue(xfo)
-
-          const diagonal = box.p1.subtract(box.p0)
-          diagonal.z = 0
-          scene.setupGrid(diagonal.length() * 2, 10)
-
           renderer.frameAll()
         })
+
+        if (scene.getRoot().getNumChildren() > 1) scene.getRoot().removeChild(1)
         scene.getRoot().addChild(asset)
+      }
+
+
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('gltf')) {
+        loadGLTF(urlParams.get('gltf'))
       }
 
       // /////////////////////////////////////
@@ -121,6 +135,57 @@
           highlighted = null
         }
       })
+
+      // /////////////////////////////////////
+      // Drag-n-Drop support
+      const dropZoneWrapper = document.getElementById('dropZoneWrapper')
+      const dropArea = document.getElementById('dropZone')
+      ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, preventDefaults, false)
+      })
+
+      function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      ;['dragenter', 'dragover'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, highlight, false)
+      })
+      ;['dragleave', 'drop'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, unhighlight, false)
+      })
+
+      function highlight(e) {
+        dropArea.classList.remove('hidden')
+        dropArea.classList.add('highlight')
+      }
+
+      function unhighlight(e) {
+        dropArea.classList.remove('highlight')
+      }
+      dropArea.addEventListener('drop', handleDrop, false)
+
+      function handleDrop(e) {
+        let dt = e.dataTransfer
+        let files = dt.files
+
+        handleFiles(files)
+      }
+      function handleFiles(files) {
+        ([...files]).forEach((file) => {
+          if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+              // convert image file to base64 string
+              loadGLTF(reader.result, file.name);
+            }, false);
+
+            reader.readAsDataURL(file);
+          }
+        })
+      }
+      window.handleFiles = handleFiles
 
       // /////////////////////////////////////
 

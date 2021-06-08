@@ -4,7 +4,17 @@ import { gltfBuffer } from './buffer.js'
 import { gltfBufferView } from './buffer_view.js'
 import { DracoDecoder } from '../ResourceLoader/draco.js'
 import { GL } from '../Renderer/webgl.js'
-import { Box3, Material, PointsProxy, LinesProxy, MeshProxy, Vec3, GeomItem, Color } from '@zeainc/zea-engine'
+import {
+  Box3,
+  Material,
+  PointsProxy,
+  LinesProxy,
+  MeshProxy,
+  Vec3,
+  GeomItem,
+  Color,
+  resourceLoader,
+} from '@zeainc/zea-engine'
 
 class gltfPrimitive extends GltfObject {
   constructor() {

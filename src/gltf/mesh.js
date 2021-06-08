@@ -2,7 +2,7 @@ import { gltfPrimitive } from './primitive.js'
 import { objectsFromJsons } from './utils.js'
 import { GltfObject } from './gltf_object.js'
 
-import { GeomItem, MeshProxy, Quat, TreeItem, Vec3, Xfo } from '@zeainc/zea-engine'
+import { GeomItem, MeshProxy, Quat, TreeItem, Vec3, Xfo, resourceLoader } from '@zeainc/zea-engine'
 
 class gltfMesh extends GltfObject {
   constructor() {

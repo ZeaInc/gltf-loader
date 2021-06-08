@@ -12,9 +12,29 @@
   </head>
   <body>
     <canvas class="full-size" id="app"></canvas>
+    <div id="dropZoneWrapper">
+      <div id="dropZone">
+      <form class="my-form">
+        <p>Drag and drop a GLTF file to view</p>
+        <input type="file" id="fileElem" multiple accept="*.glb" onchange="handleFiles(this.files)" />
+        <label class="button" for="fileElem">Select a GLTF file</label>
+      </form>
+    </div>
 
     <script type="module">
-      const { GLRenderer, Scene, Vec3, Xfo, Color, Sphere, Material, GeomItem, GLBoundingBoxPass, EnvMap } = zeaEngine
+      const {
+        GLRenderer,
+        Scene,
+        Vec3,
+        Xfo,
+        Color,
+        Sphere,
+        Material,
+        GeomItem,
+        GLBoundingBoxPass,
+        EnvMap,
+        resourceLoader,
+      } = zeaEngine
 
       const scene = new Scene()
       const renderer = new GLRenderer(document.getElementById('app'), { hideSplash: true, xrCompatible: false })
@@ -40,15 +60,43 @@
       // TreeItem to the scene tree
       const { GLTFAsset } = gltfLoader
 
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.has('gltf')) {
+      let prevProgress = 0
+      resourceLoader.on('progressIncremented', (event) => {
+        const percent = Math.round(event.percent)
+        if (percent != prevProgress) {
+          console.log(percent)
+          prevProgress = percent
+        }
+      })
+
+      const loadGLTF = (url, filename) => {
+
+        document.getElementById('dropZone').classList.add('hidden')
+
         const asset = new GLTFAsset('gltf')
-        asset.loadGltf(urlParams.get('gltf')).then(() => {
+        asset.load(url, filename).then(() => {
           console.log('Loading done')
+          const xfo = new Xfo()
+          const box = asset.getParameter('BoundingBox').getValue()
+          if (urlParams.has('y2zup')) {
+            xfo.ori.setFromAxisAndAngle(new Vec3(1, 0, 0), Math.PI * 0.5)
+            xfo.tr.z = -box.p0.y
+          } else {
+            xfo.tr.z = -box.p0.z
+          }
+          asset.getParameter('LocalXfo').setValue(xfo)
           renderer.frameAll()
         })
+
+        if (scene.getRoot().getNumChildren() > 1) scene.getRoot().removeChild(1)
         scene.getRoot().addChild(asset)
       }
+
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('gltf')) {
+        loadGLTF(urlParams.get('gltf'))
+      }
+
 
       // /////////////////////////////////////
       // Check that pointer interactions work.
@@ -67,6 +115,56 @@
         }
       })
 
+      // /////////////////////////////////////
+      // Drag-n-Drop support
+      const dropZoneWrapper = document.getElementById('dropZoneWrapper')
+      const dropArea = document.getElementById('dropZone')
+      ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, preventDefaults, false)
+      })
+
+      function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+      ;['dragenter', 'dragover'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, highlight, false)
+      })
+      ;['dragleave', 'drop'].forEach((eventName) => {
+        dropZoneWrapper.addEventListener(eventName, unhighlight, false)
+      })
+
+      function highlight(e) {
+        dropArea.classList.remove('hidden')
+        dropArea.classList.add('highlight')
+      }
+
+      function unhighlight(e) {
+        dropArea.classList.remove('highlight')
+      }
+      dropArea.addEventListener('drop', handleDrop, false)
+
+      function handleDrop(e) {
+        let dt = e.dataTransfer
+        let files = dt.files
+
+        handleFiles(files)
+      }
+      function handleFiles(files) {
+        ([...files]).forEach((file) => {
+          if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+              // convert image file to base64 string
+              loadGLTF(reader.result, file.name);
+            }, false);
+
+            reader.readAsDataURL(file);
+          }
+        })
+      }
+      window.handleFiles = handleFiles
       // /////////////////////////////////////
       // Prepare to capture images.
       // renderer.getViewport().getCamera().setPositionAndTarget(new Vec3(2, 2, 2), new Vec3(0, 0, 0.4))
