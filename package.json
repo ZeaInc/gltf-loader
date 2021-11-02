@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@percy/cypress": "^2.3.2",
+    "@rollup/plugin-json": "^4.1.0",
     "cypress": "^5.4.0",
     "es-dev-server": "^1.57.8",
     "eslint": "^6.5.1",
