@@ -229,7 +229,7 @@ class gltfMaterial extends GltfObject {
     if (this.pbrMetallicRoughness !== undefined && this.type !== 'SG') {
       this.defines.push('MATERIAL_METALLICROUGHNESS 1')
 
-      let baseColorFactor = new zeaEngine.Color(1, 1, 1, 1)
+      let baseColorFactor = new Color(1, 1, 1, 1)
       let metallicFactor = 1
       let roughnessFactor = 1
 
