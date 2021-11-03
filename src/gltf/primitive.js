@@ -299,6 +299,56 @@ class gltfPrimitive extends GltfObject {
         }
         break
       }
+      case 'LINE_LOOP':
+      case 2: {
+        geomProxyData.name = 'GLTFLineLoop'
+
+        const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices * 2)
+        for (let i = 0; i < geomProxyData.geomBuffers.numVertices; i++) {
+          indices[i * 2] = i
+          indices[i * 2 + 1] = (i + 1) % indices.length
+        }
+        geomProxyData.geomBuffers.indices = indices
+
+        geom = new LinesProxy(geomProxyData)
+
+        // Reuse Materials if possible. (On mobile, this will improve performance.)
+        const color = zeaMaterial.getParameter('BaseColor').getValue()
+        const name = `LinesMaterial [R=${color.r.toFixed(2)}, G=${color.g.toFixed(2)}, B=${color.b.toFixed(2)}]`
+        if (gltf.materialsMap[name]) {
+          zeaMaterial = gltf.materialsMap[name]
+        } else {
+          zeaMaterial = zeaMaterial.clone()
+          zeaMaterial.setShaderName('LinesShader')
+          gltf.materialsMap[name] = zeaMaterial
+        }
+        break
+      }
+      case 'LINE_STRIP':
+      case 3: {
+        geomProxyData.name = 'GLTFLineStrip'
+
+        const indices = new Uint32Array((geomProxyData.geomBuffers.numVertices - 1) * 2)
+        for (let i = 0; i < geomProxyData.geomBuffers.numVertices - 1; i++) {
+          indices[i * 2] = i
+          indices[i * 2 + 1] = i + 1
+        }
+        geomProxyData.geomBuffers.indices = indices
+
+        geom = new LinesProxy(geomProxyData)
+
+        // Reuse Materials if possible. (On mobile, this will improve performance.)
+        const color = zeaMaterial.getParameter('BaseColor').getValue()
+        const name = `LinesMaterial [R=${color.r.toFixed(2)}, G=${color.g.toFixed(2)}, B=${color.b.toFixed(2)}]`
+        if (gltf.materialsMap[name]) {
+          zeaMaterial = gltf.materialsMap[name]
+        } else {
+          zeaMaterial = zeaMaterial.clone()
+          zeaMaterial.setShaderName('LinesShader')
+          gltf.materialsMap[name] = zeaMaterial
+        }
+        break
+      }
       case 'TRIANGLES':
       case 4: {
         geomProxyData.name = 'GLTFMesh'
