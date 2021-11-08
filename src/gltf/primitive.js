@@ -303,13 +303,14 @@ class gltfPrimitive extends GltfObject {
       case 2: {
         geomProxyData.name = 'GLTFLineLoop'
 
-        const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices * 2)
-        for (let i = 0; i < geomProxyData.geomBuffers.numVertices; i++) {
-          indices[i * 2] = i
-          indices[i * 2 + 1] = (i + 1) % indices.length
+        if (geomProxyData.geomBuffers.indices == undefined) {
+          const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices * 2)
+          for (let i = 0; i < geomProxyData.geomBuffers.numVertices; i++) {
+            indices[i * 2] = i
+            indices[i * 2 + 1] = (i + 1) % indices.length
+          }
+          geomProxyData.geomBuffers.indices = indices
         }
-        geomProxyData.geomBuffers.indices = indices
-
         geom = new LinesProxy(geomProxyData)
 
         // Reuse Materials if possible. (On mobile, this will improve performance.)
@@ -328,12 +329,14 @@ class gltfPrimitive extends GltfObject {
       case 3: {
         geomProxyData.name = 'GLTFLineStrip'
 
-        const indices = new Uint32Array((geomProxyData.geomBuffers.numVertices - 1) * 2)
-        for (let i = 0; i < geomProxyData.geomBuffers.numVertices - 1; i++) {
-          indices[i * 2] = i
-          indices[i * 2 + 1] = i + 1
+        if (geomProxyData.geomBuffers.indices == undefined) {
+          const indices = new Uint32Array((geomProxyData.geomBuffers.numVertices - 1) * 2)
+          for (let i = 0; i < geomProxyData.geomBuffers.numVertices - 1; i++) {
+            indices[i * 2] = i
+            indices[i * 2 + 1] = i + 1
+          }
+          geomProxyData.geomBuffers.indices = indices
         }
-        geomProxyData.geomBuffers.indices = indices
 
         geom = new LinesProxy(geomProxyData)
 
@@ -352,6 +355,57 @@ class gltfPrimitive extends GltfObject {
       case 'TRIANGLES':
       case 4: {
         geomProxyData.name = 'GLTFMesh'
+
+        if (geomProxyData.geomBuffers.indices == undefined) {
+          const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices)
+          for (let i = 0; i < geomProxyData.geomBuffers.numVertices; i++) {
+            indices[i] = i
+          }
+          geomProxyData.geomBuffers.indices = indices
+        }
+
+        geom = new MeshProxy(geomProxyData)
+        break
+      }
+      case 'TRIANGLE_STRIP':
+      case 5: {
+        geomProxyData.name = 'GLTFMesh'
+
+        if (geomProxyData.geomBuffers.indices == undefined) {
+          const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices * 3 - 2)
+          indices[0] = 0
+          indices[1] = 1
+          indices[2] = 2
+          for (let i = 3; i < indices.length; i += 3) {
+            // Note: swap the order of indices 0 & 1 of the previous
+            // triangle for this one.
+            indices[i - 2] = indices[i - 1]
+            indices[i - 1] = indices[i - 2]
+            indices[i] = i
+          }
+          geomProxyData.geomBuffers.indices = indices
+        }
+
+        geom = new MeshProxy(geomProxyData)
+        break
+      }
+      case 'TRIANGLE_FAN':
+      case 6: {
+        geomProxyData.name = 'GLTFMesh'
+
+        if (geomProxyData.geomBuffers.indices == undefined) {
+          const indices = new Uint32Array(geomProxyData.geomBuffers.numVertices * 3 - 2)
+          indices[0] = 0
+          indices[1] = 1
+          indices[2] = 2
+          for (let i = 3; i < indices.length; i += 3) {
+            indices[i - 2] = indices[0]
+            indices[i - 1] = indices[i - 1]
+            indices[i] = i
+          }
+          geomProxyData.geomBuffers.indices = indices
+        }
+
         geom = new MeshProxy(geomProxyData)
         break
       }
