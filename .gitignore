@@ -1,5 +1,5 @@
 dist/
-libs/
+./libs
 node_modules/
 
 .envrc*
