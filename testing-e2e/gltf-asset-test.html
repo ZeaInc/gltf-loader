@@ -41,9 +41,9 @@
       scene.setupGrid(10, 10)
 
       const envMap = new EnvMap()
-      envMap.getParameter('FilePath').setValue('data/pisa.zenv')
+      envMap.load('data/pisa.zenv')
       scene.setEnvMap(envMap)
-      scene.getSettings().getParameter('Display EnvMap').setValue(false)
+      scene.displayEnvMapParam.value= false
       renderer.exposure = 1.5
 
       // /////////////////////////////////////
