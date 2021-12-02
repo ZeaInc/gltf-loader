@@ -1,6 +1,7 @@
 // import { mat4, quat } from 'gl-matrix'
 // import { jsToGl } from './utils.js';
 import {
+  Parameter,
   BooleanParameter,
   StringParameter,
   NumberParameter,
@@ -72,6 +73,7 @@ class gltfNode extends GltfObject {
         } else if (typeof value == 'number') {
           treeItem.addParameter(new NumberParameter(key, value))
         } else if (typeof value == 'object') {
+          // We don't know what object is....
           treeItem.addParameter(new Parameter(key, value, 'json'))
         }
       }

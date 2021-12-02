@@ -25,7 +25,7 @@ function initGlForMembers(gltfObj, gltf, webGlContext) {
   for (const name of Object.keys(gltfObj)) {
     const member = gltfObj[name]
 
-    if (member === undefined) {
+    if (member === undefined || member === null || typeof a_string === 'string') {
       continue
     }
     if (member.initGl !== undefined) {

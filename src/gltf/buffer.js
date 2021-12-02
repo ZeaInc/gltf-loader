@@ -3,6 +3,8 @@ import { getContainingFolder } from './utils.js'
 import { GltfObject } from './gltf_object.js'
 import { resourceLoader } from '@zeainc/zea-engine'
 
+// https://github.com/KhronosGroup/glTF-Sample-Viewer/blob/master/source/gltf/buffer.js
+
 class gltfBuffer extends GltfObject {
   constructor() {
     super()
@@ -36,7 +38,9 @@ class gltfBuffer extends GltfObject {
 
     const self = this
     // axios.get(getContainingFolder(gltf.path) + this.uri, { responseType: 'arraybuffer'})
-    resourceLoader.loadFile('binary', getContainingFolder(gltf.path) + this.uri).then(function (data) {
+    // Note: here we assume we can resolve the uri without building a path using the
+    // gltf.path as in the original code. I can't see how it worked, but It works here.
+    resourceLoader.loadFile('binary', this.uri).then(function (data) {
       self.buffer = data
       callback()
     })
