@@ -37,13 +37,19 @@ class gltfBuffer extends GltfObject {
     }
 
     const self = this
-    // axios.get(getContainingFolder(gltf.path) + this.uri, { responseType: 'arraybuffer'})
-    // Note: here we assume we can resolve the uri without building a path using the
-    // gltf.path as in the original code. I can't see how it worked, but It works here.
-    resourceLoader.loadFile('binary', this.uri).then(function (data) {
-      self.buffer = data
-      callback()
-    })
+    // If we detect a base64 encoded uri, then do not buiild a path using the getContainingFolder
+    // method. Instead load directly. I can't see how this code works in the example viewer.
+    if (this.uri.startsWith('data:application')) {
+      resourceLoader.loadFile('binary', this.uri).then(function (data) {
+        self.buffer = data
+        callback()
+      })
+    } else {
+      resourceLoader.loadFile('binary', getContainingFolder(gltf.path) + this.uri).then(function (data) {
+        self.buffer = data
+        callback()
+      })
+    }
     return true
   }
 
