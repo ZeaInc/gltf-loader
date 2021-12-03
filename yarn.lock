@@ -1552,10 +1552,10 @@
   resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.6.0.tgz#7d1674c40bddf0c6dd974c44ffd34512fe7274ff"
   integrity sha512-Moog+Smx3ORTbWwuPqoclr+uvfLnciVd6wdCaVscHPrxbmQ/IJKm3wbB7hpzJtXWjAq2l/6QMlO85aZiOdtv5Q==
 
-"@zeainc/zea-engine@^4":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@zeainc/zea-engine/-/zea-engine-4.1.2.tgz#ff2a7f30711b60b0ed5e3b415da038f0b1e8a80c"
-  integrity sha512-3l6jChHjlPQKbNWnUohT7n16IpTyhCI73Ba/dubljvxc/BDMgZF1epl0jdqMVuHJtluahNbQkyBPokCrZm2/cw==
+"@zeainc/zea-engine@next":
+  version "4.1.2-7de3e57"
+  resolved "https://registry.yarnpkg.com/@zeainc/zea-engine/-/zea-engine-4.1.2-7de3e57.tgz#b719caad48ecb87987aff3a84b1249362c8960e9"
+  integrity sha512-QTn/Br+HPQwlC0Rm/0hX9jg7gdFml9Kjr+m+Et2rNBK2d6XmSs/3nseT21EORP5yjFPOkU/kEmVPQrqN5oPgtw==
   dependencies:
     lodash-es "^4.17.21"
 
