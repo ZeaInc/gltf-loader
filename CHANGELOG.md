@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.4](https://github.com/ZeaInc/gltf-loader/compare/v4.0.3...v4.0.4) (2022-02-07)
+
+
+### Bug Fixes
+
+* Move Engine to dev dependencies ([202901e](https://github.com/ZeaInc/gltf-loader/commit/202901e4ff54820df6660f811f08bcedbe745dc6))
+
 ## [4.0.0](https://github.com/ZeaInc/gltf-loader/compare/v3.2.6...v4.0.0) (2021-11-12)
 
 
@@ -14,4 +21,3 @@ All notable changes to this project will be documented in this file. See [standa
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
