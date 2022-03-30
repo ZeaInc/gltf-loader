@@ -310,6 +310,22 @@ class gltfPrimitive extends GltfObject {
             indices[i * 2 + 1] = (i + 1) % indices.length
           }
           geomProxyData.geomBuffers.indices = indices
+        } else {
+          // Re-map strips to regular triangles
+          const stripIndices = geomProxyData.geomBuffers.indices
+          const indices = new Uint32Array(stripIndices.length * 2)
+          indices[0] = stripIndices[0]
+          indices[1] = stripIndices[1]
+          let seg = 1
+          for (let i = 2; i <= stripIndices.length; i++) {
+            indices[seg * 2] = stripIndices[i - 1]
+            indices[seg * 2 + 1] = stripIndices[i % stripIndices.length]
+            seg++
+          }
+          if (indices[0] == 1209) {
+            console.log(geomProxyData.name, geomProxyData.geomBuffers.indices.toString())
+          }
+          geomProxyData.geomBuffers.indices = indices
         }
         geom = new LinesProxy(geomProxyData)
 
@@ -334,6 +350,22 @@ class gltfPrimitive extends GltfObject {
           for (let i = 0; i < geomProxyData.geomBuffers.numVertices - 1; i++) {
             indices[i * 2] = i
             indices[i * 2 + 1] = i + 1
+          }
+          geomProxyData.geomBuffers.indices = indices
+        } else {
+          // Re-map strips to regular triangles
+          const stripIndices = geomProxyData.geomBuffers.indices
+          const indices = new Uint32Array((stripIndices.length - 1) * 2)
+          indices[0] = stripIndices[0]
+          indices[1] = stripIndices[1]
+          let seg = 1
+          for (let i = 2; i < stripIndices.length; i++) {
+            indices[seg * 2] = stripIndices[i - 1]
+            indices[seg * 2 + 1] = stripIndices[i]
+            seg++
+          }
+          if (indices[0] == 1209) {
+            console.log(geomProxyData.name, geomProxyData.geomBuffers.indices.toString())
           }
           geomProxyData.geomBuffers.indices = indices
         }
@@ -363,7 +395,6 @@ class gltfPrimitive extends GltfObject {
           }
           geomProxyData.geomBuffers.indices = indices
         }
-
         geom = new MeshProxy(geomProxyData)
         break
       }
@@ -384,8 +415,25 @@ class gltfPrimitive extends GltfObject {
             indices[i] = i
           }
           geomProxyData.geomBuffers.indices = indices
+        } else {
+          // Re-map strips to regular triangles
+          const stripIndices = geomProxyData.geomBuffers.indices
+          const numTriangles = stripIndices.length - 2
+          const indices = new Uint32Array(numTriangles * 3)
+          indices[0] = stripIndices[0]
+          indices[1] = stripIndices[1]
+          indices[2] = stripIndices[2]
+          let tri = 1
+          for (let i = 3; i < stripIndices.length; i++) {
+            // Note: swap the order of indices 0 & 1 of the previous
+            // triangle for this one.
+            indices[tri * 3] = stripIndices[i - 2]
+            indices[tri * 3 + 1] = stripIndices[i - 1]
+            indices[tri * 3 + 2] = stripIndices[i]
+            tri++
+          }
+          geomProxyData.geomBuffers.indices = indices
         }
-
         geom = new MeshProxy(geomProxyData)
         break
       }
@@ -404,8 +452,25 @@ class gltfPrimitive extends GltfObject {
             indices[i] = i
           }
           geomProxyData.geomBuffers.indices = indices
+        } else {
+          // Re-map rans to regular triangles
+          const fanIndices = geomProxyData.geomBuffers.indices
+          const numTriangles = fanIndices.length - 2
+          const indices = new Uint32Array(numTriangles * 3)
+          indices[0] = fanIndices[0]
+          indices[1] = fanIndices[1]
+          indices[2] = fanIndices[2]
+          let tri = 1
+          for (let i = 3; i < fanIndices.length; i++) {
+            // Note: swap the order of indices 0 & 1 of the previous
+            // triangle for this one.
+            indices[tri * 3] = fanIndices[0]
+            indices[tri * 3 + 1] = fanIndices[i - 1]
+            indices[tri * 3 + 2] = fanIndices[i]
+            tri++
+          }
+          geomProxyData.geomBuffers.indices = indices
         }
-
         geom = new MeshProxy(geomProxyData)
         break
       }

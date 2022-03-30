@@ -113,6 +113,12 @@
           highlighted = null
         }
       })
+      renderer.getViewport().on('pointerDown', (event) => {
+        if (event.intersectionData) {
+          const { geomItem } = event.intersectionData
+          console.log(geomItem.getPath())
+        }
+      })
 
       // /////////////////////////////////////
       // Drag-n-Drop support
