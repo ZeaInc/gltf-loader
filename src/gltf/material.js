@@ -263,7 +263,7 @@ class gltfMaterial extends GltfObject {
         this.defines.push('MATERIAL_SPECULARGLOSSINESS 1')
 
         let diffuseFactor = new Color(1, 1, 1, 1)
-        let specularFactor = vec3.fromValues(1, 1, 1)
+        let specularFactor = new Vec3(1, 1, 1)
         let glossinessFactor = 1
 
         if (this.extensions.KHR_materials_pbrSpecularGlossiness.diffuseFactor !== undefined) {
