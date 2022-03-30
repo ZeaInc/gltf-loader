@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.5](https://github.com/ZeaInc/gltf-loader/compare/v4.0.4...v4.0.5) (2022-03-30)
+
+
+### Bug Fixes
+
+* Fixed expception thrown when loading files containing 'KHR_materials_pbrSpecularGlossiness' materials. ([8e8cfed](https://github.com/ZeaInc/gltf-loader/commit/8e8cfedb82f7806c547c44d4eb6b4a42092c69c1))
+* GLTF files containing indexed Triangle strips and Fans are now loaded correctly. ([6442851](https://github.com/ZeaInc/gltf-loader/commit/64428514f69dea4ac3f761f97579e73f09a5321a))
+
+### [4.0.4-next.0](https://github.com/ZeaInc/gltf-loader/compare/v4.0.3...v4.0.4-next.0) (2021-12-03)
+
 ### [4.0.4](https://github.com/ZeaInc/gltf-loader/compare/v4.0.3...v4.0.4) (2022-02-07)
 
 
