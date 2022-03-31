@@ -117,6 +117,12 @@
         if (event.intersectionData) {
           const { geomItem } = event.intersectionData
           console.log(geomItem.getPath())
+          
+          let item = geomItem
+          while (item) {
+            console.log(item.getClassName())
+            item = item.getOwner()
+          }
         }
       })
 

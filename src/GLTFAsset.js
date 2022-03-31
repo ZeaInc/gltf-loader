@@ -1,4 +1,13 @@
-import { Box3, Color, Vec3Parameter, ColorParameter, TreeItem, Vec3, resourceLoader } from '@zeainc/zea-engine'
+import {
+  Box3,
+  Color,
+  Vec3Parameter,
+  ColorParameter,
+  TreeItem,
+  Vec3,
+  resourceLoader,
+  Registry,
+} from '@zeainc/zea-engine'
 
 // import { GltfView } from './GltfView/gltf_view.js'
 // import { GltfState } from './GltfState/gltf_state.js'
@@ -155,5 +164,7 @@ class GLTFAsset extends TreeItem {
     }
   }
 }
+
+Registry.register('GLTFAsset', GLTFAsset)
 
 export { GLTFAsset }
