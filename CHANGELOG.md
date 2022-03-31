@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.6](https://github.com/ZeaInc/gltf-loader/compare/v4.0.5...v4.0.6) (2022-03-31)
+
+
+### Bug Fixes
+
+* Register 'GLTFAsset' so the tree view can retrieve the class name. ([ad4d57f](https://github.com/ZeaInc/gltf-loader/commit/ad4d57f0d8662e36b6c2363c3c96257f0cb719d3))
+
 ### [4.0.5](https://github.com/ZeaInc/gltf-loader/compare/v4.0.4...v4.0.5) (2022-03-30)
 
 
